@@ -1,0 +1,50 @@
+﻿@model IEnumerable<EF6WebApp.Models.Blog>
+
+@{
+    ViewBag.Title = "Blog";
+}
+
+<h2>@ViewBag.Title.</h2>
+<h3>@ViewBag.Message</h3>
+@{
+    var connection = ViewBag.ConnectionString as System.Data.Common.DbConnectionStringBuilder;
+    if (connection is not null)
+    {
+        <table>
+            <caption>Connection String</caption>
+            <tbody>
+                @foreach (var key in connection.Keys.OfType<string>())
+                {
+                    var value = connection[key]?.ToString();
+                    if (!string.IsNullOrEmpty(value))
+                    {
+                    <tr>
+                        <td>@key</td>
+                        <td>@value</td>
+                    </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    }
+}
+
+
+<table>
+    <caption>Blogs</caption>
+    <thead>
+        <tr>
+            <th>Blog Name</th>
+            <th>Url</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var blog in Model)
+        {
+            <tr>
+                <td>@blog.Name</td>
+                <td>@blog.Url</td>
+            </tr>
+        }
+    </tbody>
+</table>
