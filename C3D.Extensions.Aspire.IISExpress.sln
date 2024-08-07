@@ -6,6 +6,8 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{E1FFCD98-26C8-4A07-92A9-4B3F18850527}"
 	ProjectSection(SolutionItems) = preProject
 		.vs\C3D.Extensions.Aspire.IISExpress\config\applicationhost.config = .vs\C3D.Extensions.Aspire.IISExpress\config\applicationhost.config
+		LICENSE.txt = LICENSE.txt
+		README.md = README.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{B02941E8-EB9F-4AFF-8383-6B231DD01754}"
@@ -16,7 +18,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "C3D.Extensions.Aspire.IISEx
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "C3D.Extensions.Aspire.WaitFor", "src\C3D\Extensions\Aspire\WaitFor\C3D.Extensions.Aspire.WaitFor.csproj", "{2030B92F-8C65-48E8-A35B-52F798DC2F7E}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Simple", "Simple", "{0040F6AE-FAEC-42D3-9AB2-770D4FB3FCF1}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SimpleMVC", "SimpleMVC", "{0040F6AE-FAEC-42D3-9AB2-770D4FB3FCF1}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspireAppHost1", "samples\Simple\AspireAppHost\AspireAppHost1.csproj", "{14284C4B-2EA4-4496-9E54-69D76F63E861}"
 EndProject
