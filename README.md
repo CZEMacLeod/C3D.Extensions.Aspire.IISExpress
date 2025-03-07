@@ -35,13 +35,24 @@ This is a nieve implementation that does not deal with request scopes - all obje
 A localdb is created in the App_Data folder if you run the application directly and each time a new blog is created on startup.
 If launched via aspire, it will wait for the sql server to start then start IISExpress. The database will be created afresh each time and there will only be a single blog entry.
 
-## Debugging
-Because Aspire doesn't know how to attach the debugger to IIS Express, two techniques can be used.
-These can be set with 
-```cs
-	.WithDebugger(DebugMode.None)
-```
+### SWA
+This shows using Aspire to handle [Incremental ASP.NET to ASP.NET Core Migration](https://learn.microsoft.com/aspnet/core/migration/inc/overview).
+This consists of a Full Framework example app using MVC, with some of the code from the RemoteSession example added in.
+The Core app is lightweight and only contains YARP, a Session variable route (per the RemoteSession example), OTLP telemetry, and HeathChecks.
+Apire sets up a randomized app key used by both applications, and wires up the Urls for YARP etc.
+Traces show the request span of the core app, the proxy request, and the framework processing.
 
+
+## Debugging
+Because Aspire doesn't natively know how to attach the debugger to IIS Express, two techniques can be used.
+These can be set with one of
+```cs
+	.WithDebugger()
+	.WithDebugger(DebugMode.None)
+	.WithDebugger(DebugMode.Environment)
+	.WithDebugger(DebugMode.VisualStudio)
+```
+- The default is `VisualStudio`
 - `None` means do not attach the debugger.
 - `Environment` sets the environment variable `Launch_Debugger_On_Start` to `true`. 
 This is checked for by a `PreApplicationStartMethod` which will attempt to launch a debugger.
@@ -50,5 +61,4 @@ This is checked for by a `PreApplicationStartMethod` which will attempt to launc
 ## Known Issues
 - The `$(SolutionDir)\.vs\$(SolutionName)\config\applicationhost.config` file is not checked in as part of the source so you will probably have to manually select each web application and run it once manually to setup the appropriate information.
 - There is no easy way to automatically start up the IIS Express based website (it might be possible to do via a healthcheck poll or similar but that is out of scope at this time.)
-- It is not 'easy' to attach a debugger to IIS Express - the existing solutions are very basic.
 
