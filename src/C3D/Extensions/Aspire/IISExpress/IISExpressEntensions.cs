@@ -2,6 +2,7 @@
 using Aspire.Hosting.ApplicationModel;
 using C3D.Extensions.Aspire.IISExpress.Configuration;
 using C3D.Extensions.Aspire.IISExpress.Resources;
+using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Immutable;
 using System.Xml.Serialization;
 
@@ -9,8 +10,10 @@ namespace C3D.Extensions.Aspire.IISExpress;
 
 public static class IISExpressEntensions
 {
+    public static IServiceCollection WithAttchDebugger(this IServiceCollection services) => services.AddHostedService<AttachDebuggerHook>();
+
     public static IResourceBuilder<IISExpressProjectResource> WithDebugger(this IResourceBuilder<IISExpressProjectResource> resourceBuilder,
-        DebugMode debugMode = DebugMode.VSJITDebugger) =>
+        DebugMode debugMode = DebugMode.VisualStudio) =>
         resourceBuilder
             .WithEnvironment("Launch_Debugger_On_Start", debugMode == DebugMode.Environment ? "true" : null)
             .WithAnnotation<DebugAttachResource>(new() { DebugMode = debugMode }, ResourceAnnotationMutationBehavior.Replace);
@@ -27,6 +30,8 @@ public static class IISExpressEntensions
         string? solutionDir = null)
     {
         solutionDir ??= new DirectoryInfo(builder.AppHostDirectory).Parent!.FullName;
+
+        builder.Services.WithAttchDebugger();
 
         builder.AddResource(new IISExpressConfigurationResource(solutionName, solutionDir))
             .WithInitialState(new CustomResourceSnapshot()
