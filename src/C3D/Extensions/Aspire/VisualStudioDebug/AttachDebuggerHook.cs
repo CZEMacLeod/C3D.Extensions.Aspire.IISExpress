@@ -1,12 +1,11 @@
-﻿using Aspire.Hosting.ApplicationModel;
-using Aspire.Hosting.Lifecycle;
-using C3D.Extensions.Aspire.IISExpress.Resources;
+﻿using Aspire.Hosting;
+using Aspire.Hosting.ApplicationModel;
+using C3D.Extensions.Aspire.VisualStudioDebug.Annotations;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
-using static Google.Protobuf.Reflection.GeneratedCodeInfo.Types;
 
-namespace C3D.Extensions.Aspire.IISExpress;
+namespace C3D.Extensions.Aspire.VisualStudioDebug;
 
 internal class AttachDebuggerHook : BackgroundService
 {
@@ -26,9 +25,10 @@ internal class AttachDebuggerHook : BackgroundService
     {
         await foreach (var notification in resourceNotificationService.WatchAsync(stoppingToken))
         {
-            if (notification.Resource is IISExpressProjectResource resource &&
-                resource.Annotations.OfType<DebugAttachResource>().Any(dar => dar.DebugMode == DebugMode.VisualStudio) &&
-                !resource.Annotations.OfType<DebugerAttachedResource>().Any())
+            if (notification.Resource is ExecutableResource resource &&
+                resource.HasAnnotationOfType<DebugAttachAnnotation>(dar => 
+                    dar.DebugMode == DebugMode.VisualStudio &&
+                    dar.DebuggerProcessId is null))
             {
                 try
                 {
@@ -57,7 +57,12 @@ internal class AttachDebuggerHook : BackgroundService
         if (vs is not null)
         {
             logger.LogWarning("Debugger {vs}:{vsId} already attached to {target}:{targetId}", vs.ProcessName, vs.Id, target.ProcessName, target.Id);
-            resource.Annotations.Add(new DebugerAttachedResource() { DebuggerProcessId = vs.Id });
+            if (!resource.TryGetLastAnnotation<DebugAttachAnnotation>(out var annotation))
+            {
+                annotation = new DebugAttachAnnotation();
+                resource.Annotations.Add(annotation);
+            }
+            annotation.DebuggerProcessId = vs.Id;
             return;
         }
 
@@ -69,7 +74,7 @@ internal class AttachDebuggerHook : BackgroundService
             return;
         }
 
-        var engines = resource.Annotations.OfType<DebugAttachResource>().SelectMany(d => d.Engines ?? []).ToArray();
+        var engines = resource.Annotations.OfType<DebugAttachAnnotation>().SelectMany(d => d.Engines ?? []).ToArray();
         if (engines.Length == 0)
         {
             var availableEngines = VisualStudioAttacher.GetDebugEngines(vs);
@@ -83,8 +88,12 @@ internal class AttachDebuggerHook : BackgroundService
         if (vs is not null)
         {
             logger.LogInformation("Debugger {vs}:{vsId} attached to {target}:{targetId}", vs.ProcessName, vs.Id, target.ProcessName, target.Id);
-
-            resource.Annotations.Add(new DebugerAttachedResource() {  DebuggerProcessId = vs.Id });
+            if (!resource.TryGetLastAnnotation<DebugAttachAnnotation>(out var annotation))
+            {
+                annotation = new DebugAttachAnnotation();
+                resource.Annotations.Add(annotation);
+            }
+            annotation.DebuggerProcessId = vs.Id;
         }
 
     }

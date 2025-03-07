@@ -1,4 +1,4 @@
-﻿namespace C3D.Extensions.Aspire.IISExpress.Resources;
+﻿namespace C3D.Extensions.Aspire.VisualStudioDebug;
 
 public enum DebugMode
 {

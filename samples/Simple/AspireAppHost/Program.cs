@@ -1,14 +1,9 @@
-using C3D.Extensions.Aspire.IISExpress;
-using C3D.Extensions.Aspire.IISExpress.Resources;
-
 var builder = DistributedApplication.CreateBuilder(new DistributedApplicationOptions()
 {
     Args = args,
     AllowUnsecuredTransport = true
 });
 
-builder.AddIISExpressProject<Projects.SimpleMVC>()
-    .WithDebugger(DebugMode.VisualStudio)
-    ;
+builder.AddIISExpressProject<Projects.SimpleMVC>();
 
 builder.Build().Run();

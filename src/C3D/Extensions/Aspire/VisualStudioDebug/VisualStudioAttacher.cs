@@ -5,37 +5,18 @@ using System.Runtime.InteropServices.ComTypes;
 using DTEProcess = EnvDTE90.Process3;
 using Process = System.Diagnostics.Process;
 
-// Based on https://gist.github.com/atruskie/3813175#file-visualstudioattacher-cs
-
-namespace C3D.Extensions.Aspire.IISExpress;
-
-// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="AutoAttachVs.cs" company="QutEcoacoustics">
-// All code in this file and all associated files are the copyright and property of the QUT Ecoacoustics Research Group (formerly MQUTeR, and formerly QUT Bioacoustics Research Group).
-// </copyright>
-// <summary>
-//   Example taken from this gist.
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
+namespace C3D.Extensions.Aspire.VisualStudioDebug;
 
 /// <summary>
-/// Example taken from <a href="https://gist.github.com/3813175">this gist</a>.
+/// Based on code from <a href="https://gist.github.com/3813175">this gist</a>.
 /// </summary>
-[SuppressMessage("StyleCop.CSharp.NamingRules", "SA1305:FieldNamesMustNotUseHungarianNotation",
-    Justification = "Reviewed. Suppression is OK here.", Scope = "class")]
-public static class VisualStudioAttacher
+internal static class VisualStudioAttacher
 {
     [DllImport("ole32.dll")]
     internal static extern int CreateBindCtx(int reserved, out IBindCtx ppbc);
 
     [DllImport("ole32.dll")]
     internal static extern int GetRunningObjectTable(int reserved, out IRunningObjectTable prot);
-
-    [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-    internal static extern bool SetForegroundWindow(IntPtr hWnd);
-
-    //[DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-    //internal static extern IntPtr SetFocus(IntPtr hWnd);
 
     public static string? GetSolutionForVisualStudio(Process visualStudioProcess)
     {
@@ -118,9 +99,6 @@ public static class VisualStudioAttacher
             if (processToAttachTo != null)
             {
                 processToAttachTo.Attach2(engines);
-
-                ShowWindow((int)visualStudioProcess.MainWindowHandle, 3);
-                SetForegroundWindow(visualStudioProcess.MainWindowHandle);
             }
             else
             {
@@ -130,86 +108,18 @@ public static class VisualStudioAttacher
         }
     }
 
-    /// <summary>
-    /// The get visual studio for solutions.
-    /// </summary>
-    /// <param name="solutionNames">
-    /// The solution names.
-    /// </param>
-    /// <returns>
-    /// The <see cref="Process"/>.
-    /// </returns>
-    public static Process? GetVisualStudioForSolutions(List<string> solutionNames)
-    {
-        foreach (string solution in solutionNames)
-        {
-            var visualStudioForSolution = GetVisualStudioForSolution(solution);
-            if (visualStudioForSolution is not null)
-            {
-                return visualStudioForSolution;
-            }
-        }
-
-        return null;
-    }
-
-    /// <summary>
-    /// The get visual studio process that is running and has the specified solution loaded.
-    /// </summary>
-    /// <param name="solutionName">
-    /// The solution name to look for.
-    /// </param>
-    /// <returns>
-    /// The visual studio <see cref="Process"/> with the specified solution name.
-    /// </returns>
-    public static Process? GetVisualStudioForSolution(string solutionName)
-    {
-        IEnumerable<Process> visualStudios = GetVisualStudioProcesses();
-
-        foreach (Process visualStudio in visualStudios)
-        {
-            if (TryGetVsInstance(visualStudio.Id, out _DTE? visualStudioInstance))
-            {
-                try
-                {
-                    string actualSolutionName = Path.GetFileName(visualStudioInstance.Solution.FullName);
-
-                    if (string.Compare(
-                        actualSolutionName,
-                        solutionName,
-                        StringComparison.InvariantCultureIgnoreCase) == 0)
-                    {
-                        return visualStudio;
-                    }
-                }
-                catch (Exception)
-                {
-                    throw;
-                }
-            }
-        }
-
-        return null;
-    }
-
-    [DllImport("User32")]
-    private static extern int ShowWindow(int hwnd, int nCmdShow);
-
-    private static IEnumerable<Process> GetVisualStudioProcesses()
-    {
-        Process[] processes = Process.GetProcesses();
-        return processes.Where(o => o.ProcessName.Contains("devenv", StringComparison.OrdinalIgnoreCase)).ToArray();
-    }
+    private static IEnumerable<Process> GetVisualStudioProcesses() => 
+        Process.GetProcesses()
+            .Where(o => o.ProcessName.Contains("devenv", StringComparison.OrdinalIgnoreCase))
+            .ToArray();
 
     private static bool TryGetVsInstance(int processId, [NotNullWhen(true)] out _DTE? instance)
     {
         IntPtr numFetched = IntPtr.Zero;
-        IRunningObjectTable runningObjectTable;
-        IEnumMoniker monikerEnumerator;
-        IMoniker[] monikers = new IMoniker[1];
+        var monikers = new IMoniker[1];
 
-        GetRunningObjectTable(0, out runningObjectTable);
-        runningObjectTable.EnumRunning(out monikerEnumerator);
+        GetRunningObjectTable(0, out IRunningObjectTable runningObjectTable);
+        runningObjectTable.EnumRunning(out IEnumMoniker monikerEnumerator);
         monikerEnumerator.Reset();
 
         while (monikerEnumerator.Next(1, monikers, numFetched) == 0)

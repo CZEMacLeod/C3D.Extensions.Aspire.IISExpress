@@ -1,6 +1,7 @@
 ﻿using Aspire.Hosting.ApplicationModel;
 using C3D.Extensions.Aspire.IISExpress.Annotations;
 using C3D.Extensions.Aspire.IISExpress.Configuration;
+using C3D.Extensions.Aspire.IISExpress.Resources;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Xml.Serialization;
