@@ -9,7 +9,7 @@ var builder = DistributedApplication.CreateBuilder(new DistributedApplicationOpt
 });
 
 var sql = builder.AddSqlServer("sql")
-    .WithHealthCheck();
+    .WithHealthCheck("sql");
 var sqldb = sql.AddDatabase("sqldb");
 
 builder.AddIISExpressConfiguration(ThisAssembly.Project.SolutionName, ThisAssembly.Project.SolutionDir);

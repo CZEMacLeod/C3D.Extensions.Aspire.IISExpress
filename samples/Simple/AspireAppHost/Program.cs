@@ -11,7 +11,7 @@ var builder = DistributedApplication.CreateBuilder(new DistributedApplicationOpt
 builder.AddIISExpressConfiguration(ThisAssembly.Project.SolutionName, ThisAssembly.Project.SolutionDir);
 
 builder.AddIISExpressProject<Projects.SimpleMVC>()
-    .WithDebugger(DebugMode.None)
+    .WithDebugger(DebugMode.VisualStudio)
     ;
 
 builder.Build().Run();
