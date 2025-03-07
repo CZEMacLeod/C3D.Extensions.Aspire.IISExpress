@@ -17,7 +17,7 @@ builder.AddIISExpressConfiguration(ThisAssembly.Project.SolutionName, ThisAssemb
 builder.AddIISExpressProject<Projects.EF6WebApp>()
     .WithReference(sqldb, "BloggingContext")
     .WaitFor(sqldb)
-    .WithDebugger(DebugMode.None)
+    .WithDebugger(DebugMode.VisualStudio)
     ;
 
 builder.Build().Run();

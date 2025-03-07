@@ -34,12 +34,12 @@ public static class VisualStudioAttacher
     [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
     internal static extern bool SetForegroundWindow(IntPtr hWnd);
 
-    [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-    internal static extern IntPtr SetFocus(IntPtr hWnd);
+    //[DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+    //internal static extern IntPtr SetFocus(IntPtr hWnd);
 
     public static string? GetSolutionForVisualStudio(Process visualStudioProcess)
     {
-        if (TryGetVsInstance(visualStudioProcess.Id, out _DTE visualStudioInstance))
+        if (TryGetVsInstance(visualStudioProcess.Id, out _DTE? visualStudioInstance))
         {
             try
             {
@@ -59,7 +59,7 @@ public static class VisualStudioAttacher
 
         foreach (Process visualStudio in visualStudios)
         {
-            if (TryGetVsInstance(visualStudio.Id, out _DTE visualStudioInstance))
+            if (TryGetVsInstance(visualStudio.Id, out _DTE? visualStudioInstance))
             {
                 try
                 {
@@ -82,19 +82,14 @@ public static class VisualStudioAttacher
 
     public static IEnumerable<string>? GetDebugEngines(Process visualStudioProcess)
     {
-        if (!TryGetVsInstance(visualStudioProcess.Id, out _DTE visualStudioInstance))
+        if (!TryGetVsInstance(visualStudioProcess.Id, out _DTE? visualStudioInstance))
             return null;
 
         var dte = (EnvDTE80.DTE2)visualStudioInstance;
         var debugger = (EnvDTE90.Debugger3)dte.Debugger;
         var transport = debugger.Transports.Item("default");
 
-        List<string> engines = new();
-        foreach (EnvDTE80.Engine engine in transport.Engines)
-        {
-            engines.Add(engine.Name);
-        }
-        return engines;
+        return transport.Engines.Cast<EnvDTE80.Engine>().Select(e=>e.Name).ToList();
     }
 
     /// <summary>
@@ -112,7 +107,7 @@ public static class VisualStudioAttacher
     public static void AttachVisualStudioToProcess(Process visualStudioProcess, Process applicationProcess, params string[] engines)
     {
 
-        if (TryGetVsInstance(visualStudioProcess.Id, out _DTE visualStudioInstance))
+        if (TryGetVsInstance(visualStudioProcess.Id, out _DTE? visualStudioInstance))
         {
             // Find the process you want the VS instance to attach to...
             DTEProcess? processToAttachTo =
@@ -144,12 +139,12 @@ public static class VisualStudioAttacher
     /// <returns>
     /// The <see cref="Process"/>.
     /// </returns>
-    public static Process GetVisualStudioForSolutions(List<string> solutionNames)
+    public static Process? GetVisualStudioForSolutions(List<string> solutionNames)
     {
         foreach (string solution in solutionNames)
         {
-            Process visualStudioForSolution = GetVisualStudioForSolution(solution);
-            if (visualStudioForSolution != null)
+            var visualStudioForSolution = GetVisualStudioForSolution(solution);
+            if (visualStudioForSolution is not null)
             {
                 return visualStudioForSolution;
             }
@@ -167,14 +162,13 @@ public static class VisualStudioAttacher
     /// <returns>
     /// The visual studio <see cref="Process"/> with the specified solution name.
     /// </returns>
-    public static Process GetVisualStudioForSolution(string solutionName)
+    public static Process? GetVisualStudioForSolution(string solutionName)
     {
         IEnumerable<Process> visualStudios = GetVisualStudioProcesses();
 
         foreach (Process visualStudio in visualStudios)
         {
-            _DTE visualStudioInstance;
-            if (TryGetVsInstance(visualStudio.Id, out visualStudioInstance))
+            if (TryGetVsInstance(visualStudio.Id, out _DTE? visualStudioInstance))
             {
                 try
                 {
@@ -207,7 +201,7 @@ public static class VisualStudioAttacher
         return processes.Where(o => o.ProcessName.Contains("devenv", StringComparison.OrdinalIgnoreCase)).ToArray();
     }
 
-    private static bool TryGetVsInstance(int processId, out _DTE instance)
+    private static bool TryGetVsInstance(int processId, [NotNullWhen(true)] out _DTE? instance)
     {
         IntPtr numFetched = IntPtr.Zero;
         IRunningObjectTable runningObjectTable;

@@ -3,6 +3,7 @@ using C3D.Extensions.Aspire.IISExpress.Resources;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
+using static Google.Protobuf.Reflection.GeneratedCodeInfo.Types;
 
 namespace C3D.Extensions.Aspire.IISExpress;
 
@@ -33,7 +34,7 @@ internal class AttachDebuggerHook : BackgroundService
         }
     }
 
-    private void DebugAttach(ResourceEvent notification, IISExpressProjectResource resource)
+    private void DebugAttach(ResourceEvent notification, IResource resource)
     {
         var processId = notification.Snapshot.Properties.SingleOrDefault(prp => prp.Name == "executable.pid")?.Value as int? ?? 0;
         if (processId == 0)
@@ -60,11 +61,15 @@ internal class AttachDebuggerHook : BackgroundService
             return;
         }
 
-        var engines = VisualStudioAttacher.GetDebugEngines(vs);
-        logger.LogInformation("Available debug engines {engines}", engines);
+        var engines = resource.Annotations.OfType<DebugAttachResource>().SelectMany(d => d.Engines ?? []).ToArray();
+        if (engines.Length == 0)
+        {
+            var availableEngines = VisualStudioAttacher.GetDebugEngines(vs);
+            logger.LogInformation("Available debug engines {engines}", availableEngines);
+        }
 
         logger.LogInformation("Attaching {vs}:{vsId} to {target}:{targetId} for {applicationName}", vs.ProcessName, vs.Id, target.ProcessName, target.Id, notification.Resource.Name);
-        VisualStudioAttacher.AttachVisualStudioToProcess(vs, target, "Managed (.NET Framework 4.x)");
+        VisualStudioAttacher.AttachVisualStudioToProcess(vs, target, engines);
 
         vs = VisualStudioAttacher.GetAttachedVisualStudio(target);
         if (vs is not null)

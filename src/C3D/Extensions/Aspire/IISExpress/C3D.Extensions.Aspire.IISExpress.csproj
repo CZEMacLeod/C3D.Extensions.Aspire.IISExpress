@@ -9,7 +9,6 @@
   <ItemGroup>
     <PackageReference Include="Aspire.Hosting" Version="9.1.0" />
     <PackageReference Include="envdte" Version="17.13.40008" />
-    <PackageReference Include="Microsoft.Web.Administration" Version="11.1.0" />
     <None Update="*.props;*.targets" Pack="true" PackagePath="build\$(TargetFramework)\%(Filename)%(Extension)" Visible="true" />
   </ItemGroup>
 

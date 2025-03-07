@@ -10,13 +10,16 @@ namespace C3D.Extensions.Aspire.IISExpress;
 
 public static class IISExpressEntensions
 {
-    public static IServiceCollection WithAttchDebugger(this IServiceCollection services) => services.AddHostedService<AttachDebuggerHook>();
+    public static IServiceCollection WithAttachDebugger(this IServiceCollection services) => services.AddHostedService<AttachDebuggerHook>();
 
     public static IResourceBuilder<IISExpressProjectResource> WithDebugger(this IResourceBuilder<IISExpressProjectResource> resourceBuilder,
         DebugMode debugMode = DebugMode.VisualStudio) =>
         resourceBuilder
             .WithEnvironment("Launch_Debugger_On_Start", debugMode == DebugMode.Environment ? "true" : null)
-            .WithAnnotation<DebugAttachResource>(new() { DebugMode = debugMode }, ResourceAnnotationMutationBehavior.Replace);
+            .WithAnnotation<DebugAttachResource>(new() { 
+                    DebugMode = debugMode, 
+                    Engines = ["Managed (.NET Framework 4.x)"] }, 
+                ResourceAnnotationMutationBehavior.Replace);
 
     /// <summary>
     /// Adds the configuration information used to find the applicationhost.config file
@@ -31,7 +34,7 @@ public static class IISExpressEntensions
     {
         solutionDir ??= new DirectoryInfo(builder.AppHostDirectory).Parent!.FullName;
 
-        builder.Services.WithAttchDebugger();
+        builder.Services.WithAttachDebugger();
 
         builder.AddResource(new IISExpressConfigurationResource(solutionName, solutionDir))
             .WithInitialState(new CustomResourceSnapshot()
