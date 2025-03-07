@@ -5,6 +5,8 @@ using System.Web.Mvc;
 
 namespace C3D.Extensions.DependencyInjection;
 
+#nullable enable
+
 internal class ServiceProviderDependencyResolver : IDependencyResolver
 {
     private readonly IServiceProvider serviceProvider;

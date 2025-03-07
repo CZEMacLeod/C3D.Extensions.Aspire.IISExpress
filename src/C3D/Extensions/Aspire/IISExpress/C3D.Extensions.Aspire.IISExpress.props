@@ -1,11 +1,12 @@
 <Project>
   <ItemGroup>
-    <PackageReference Include="ThisAssembly.Project" Version="1.5.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
-    </PackageReference>
-    
-    <ProjectProperty Include="SolutionName" />
-    <ProjectProperty Include="SolutionDir" />
+    <AssemblyAttribute Include="System.Reflection.AssemblyMetadata">
+      <_Parameter1>apphostsolutionname</_Parameter1>
+      <_Parameter2>$(SolutionName)</_Parameter2>
+    </AssemblyAttribute>
+    <AssemblyAttribute Include="System.Reflection.AssemblyMetadata">
+      <_Parameter1>apphostsolutiondir</_Parameter1>
+      <_Parameter2>$(SolutionDir)</_Parameter2>
+    </AssemblyAttribute>
   </ItemGroup>
 </Project>

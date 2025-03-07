@@ -19,13 +19,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "C3D.Extensions.Aspire.IISEx
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SimpleMVC", "SimpleMVC", "{0040F6AE-FAEC-42D3-9AB2-770D4FB3FCF1}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspireAppHost1", "samples\Simple\AspireAppHost\AspireAppHost1.csproj", "{14284C4B-2EA4-4496-9E54-69D76F63E861}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspireAppHostSimpleMVC", "samples\Simple\AspireAppHost\AspireAppHostSimpleMVC.csproj", "{14284C4B-2EA4-4496-9E54-69D76F63E861}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleMVC", "samples\Simple\SimpleMVC\SimpleMVC.csproj", "{43BF8982-D17E-4A3C-A74A-5CC3242D314E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "EF6", "EF6", "{7FD15F17-E945-41C8-B586-B952A5D59765}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspireAppHost2", "samples\EF6\AspireAppHost\AspireAppHost2.csproj", "{F4E0E090-23D0-4FD8-8F7C-56D5A0812696}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspireAppHostEF6", "samples\EF6\AspireAppHost\AspireAppHostEF6.csproj", "{F4E0E090-23D0-4FD8-8F7C-56D5A0812696}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EF6WebApp", "samples\EF6\EF6\EF6WebApp.csproj", "{BB146C35-4887-4A60-B46E-8C1B44394E2F}"
 EndProject
@@ -33,7 +33,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "C3D.Extensions.SystemWeb.Op
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Legacy", "Legacy", "{A49C0E23-C10D-42E4-AFE0-30451146CFC9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspireAppHost3", "samples\Legacy\AspireAppHost3\AspireAppHost3.csproj", "{BD6C97BF-3ABB-4360-8364-07DBD1BC5511}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspireAppHostLegacy", "samples\Legacy\AspireAppHost3\AspireAppHostLegacy.csproj", "{BD6C97BF-3ABB-4360-8364-07DBD1BC5511}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LegacyWebApplication", "samples\Legacy\LegacyWebApplication\LegacyWebApplication.csproj", "{85C0E2EE-A1DB-40D8-BE13-44B740101986}"
 EndProject
@@ -43,7 +43,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SWAFramework", "samples\SWA
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SWACore", "samples\SWA\SWACore\SWACore.csproj", "{9E38817E-FEF4-4267-B9E4-2DACD33995C8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SWAAspireHost", "samples\SWA\SWAAspireHost\SWAAspireHost.csproj", "{92BF3B00-1E45-4024-80B4-191713E2202E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspireAppHostSWA", "samples\SWA\SWAAspireHost\AspireAppHostSWA.csproj", "{92BF3B00-1E45-4024-80B4-191713E2202E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SWALibrary", "samples\SWA\SWALibrary\SWALibrary.csproj", "{CC2EA056-A6F4-481B-87A5-A41B0158C178}"
 EndProject

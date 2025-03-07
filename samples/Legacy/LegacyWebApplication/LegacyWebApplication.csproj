@@ -117,11 +117,11 @@
     <Reference Include="OpenTelemetry.Extensions.Hosting, Version=1.0.0.0, Culture=neutral, PublicKeyToken=7bd6737fe5b67e3c, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\OpenTelemetry.Extensions.Hosting.1.11.2\lib\net462\OpenTelemetry.Extensions.Hosting.dll</HintPath>
     </Reference>
-    <Reference Include="OpenTelemetry.Instrumentation.AspNet, Version=1.9.0.46, Culture=neutral, PublicKeyToken=7bd6737fe5b67e3c, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\OpenTelemetry.Instrumentation.AspNet.1.9.0-beta.1\lib\net462\OpenTelemetry.Instrumentation.AspNet.dll</HintPath>
+    <Reference Include="OpenTelemetry.Instrumentation.AspNet, Version=1.11.0.400, Culture=neutral, PublicKeyToken=7bd6737fe5b67e3c, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\OpenTelemetry.Instrumentation.AspNet.1.11.0-beta.2\lib\net462\OpenTelemetry.Instrumentation.AspNet.dll</HintPath>
     </Reference>
-    <Reference Include="OpenTelemetry.Instrumentation.AspNet.TelemetryHttpModule, Version=1.9.0.46, Culture=neutral, PublicKeyToken=7bd6737fe5b67e3c, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\OpenTelemetry.Instrumentation.AspNet.TelemetryHttpModule.1.9.0-beta.1\lib\net462\OpenTelemetry.Instrumentation.AspNet.TelemetryHttpModule.dll</HintPath>
+    <Reference Include="OpenTelemetry.Instrumentation.AspNet.TelemetryHttpModule, Version=1.11.0.400, Culture=neutral, PublicKeyToken=7bd6737fe5b67e3c, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\OpenTelemetry.Instrumentation.AspNet.TelemetryHttpModule.1.11.0-beta.2\lib\net462\OpenTelemetry.Instrumentation.AspNet.TelemetryHttpModule.dll</HintPath>
     </Reference>
     <Reference Include="OpenTelemetry.Instrumentation.Http, Version=1.11.1.407, Culture=neutral, PublicKeyToken=7bd6737fe5b67e3c, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\OpenTelemetry.Instrumentation.Http.1.11.1\lib\net462\OpenTelemetry.Instrumentation.Http.dll</HintPath>

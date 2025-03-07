@@ -1,11 +1,9 @@
-using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.SystemWebAdapters;
-using Microsoft.AspNetCore.SystemWebAdapters.Features;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
 using OpenTelemetry;
-using System.Runtime.CompilerServices;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Builder;
 
 namespace SWACore;
 
@@ -55,6 +53,10 @@ public class Program
 
         builder.Services.AddReverseProxy();
 
+        builder.Services.AddOptions<RemoteAppClientOptions>()
+            .BindConfiguration("RemoteApp")
+            .ValidateOnStart();
+
         builder.Services.AddSystemWebAdapters()
             .AddSessionSerializer(options =>
             {
@@ -66,8 +68,6 @@ public class Program
             })
             .AddRemoteAppClient(options =>
             {
-                options.ApiKey = builder.Configuration["RemoteApp:Key"]!;
-                options.RemoteAppUrl = new(builder.Configuration["RemoteApp:Url"]);
             })
             .AddSessionClient();
 
@@ -103,7 +103,9 @@ public class Program
             return session.Cast<string>().Select(key => new { Key = key, Value = session[key] });
         }).RequireSystemWebAdapterSession();
 
-        app.MapForwarder("/{**catch-all}", builder.Configuration["RemoteApp:Url"]!).WithOrder(int.MaxValue);
+        var remoteApp = app.Services.GetRequiredService<IOptions<RemoteAppClientOptions>>();
+
+        app.MapForwarder("/{**catch-all}", remoteApp.Value.RemoteAppUrl.AbsoluteUri).WithOrder(int.MaxValue);
 
         app.Run();
     }

@@ -8,15 +8,12 @@ var builder = DistributedApplication.CreateBuilder(new DistributedApplicationOpt
     AllowUnsecuredTransport = true
 });
 
-var sql = builder.AddSqlServer("sql")
-    .WithHealthCheck("sql");
+var sql = builder.AddSqlServer("sql");
 var sqldb = sql.AddDatabase("sqldb");
-
-builder.AddIISExpressConfiguration(ThisAssembly.Project.SolutionName, ThisAssembly.Project.SolutionDir);
 
 builder.AddIISExpressProject<Projects.EF6WebApp>()
     .WithReference(sqldb, "BloggingContext")
-    .WaitFor(sqldb)
+    .WaitFor(sql)
     .WithDebugger(DebugMode.VisualStudio)
     ;
 

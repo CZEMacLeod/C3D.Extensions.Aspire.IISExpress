@@ -1,4 +1,5 @@
 ﻿using Aspire.Hosting.ApplicationModel;
+using Aspire.Hosting.Lifecycle;
 using C3D.Extensions.Aspire.IISExpress.Resources;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -31,7 +32,7 @@ internal class AttachDebuggerHook : BackgroundService
             {
                 try
                 {
-                    DebugAttach(notification, resource);
+                    DebugAttach(notification, notification.Resource);
                 }
                 catch (Exception e)
                 {
@@ -56,7 +57,7 @@ internal class AttachDebuggerHook : BackgroundService
         if (vs is not null)
         {
             logger.LogWarning("Debugger {vs}:{vsId} already attached to {target}:{targetId}", vs.ProcessName, vs.Id, target.ProcessName, target.Id);
-            resource.Annotations.Add(new DebugerAttachedResource());
+            resource.Annotations.Add(new DebugerAttachedResource() { DebuggerProcessId = vs.Id });
             return;
         }
 
@@ -83,7 +84,7 @@ internal class AttachDebuggerHook : BackgroundService
         {
             logger.LogInformation("Debugger {vs}:{vsId} attached to {target}:{targetId}", vs.ProcessName, vs.Id, target.ProcessName, target.Id);
 
-            resource.Annotations.Add(new DebugerAttachedResource());
+            resource.Annotations.Add(new DebugerAttachedResource() {  DebuggerProcessId = vs.Id });
         }
 
     }

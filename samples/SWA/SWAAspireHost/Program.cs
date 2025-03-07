@@ -11,16 +11,15 @@ var builder = DistributedApplication.CreateBuilder(new DistributedApplicationOpt
 
 var key = Guid.NewGuid().ToString();
 
-builder.AddIISExpressConfiguration(ThisAssembly.Project.SolutionName, ThisAssembly.Project.SolutionDir);
-
 var framework = builder.AddIISExpressProject<Projects.SWAFramework>("framework", IISExpressBitness.IISExpress64Bit)
-    .WithEnvironment("RemoteAppApiKey", key)
+    .WithEnvironment("RemoteApp__ApiKey", key)
     .WithDebugger(DebugMode.VisualStudio)
     ;
 
 builder.AddProject<Projects.SWACore>("core")
-    .WithEnvironment("RemoteApp__Key", key)
-    .WithEnvironment("RemoteApp__Url", framework.GetEndpoint("http"))
-    .WithHttpsHealthCheck("/alive");
+    .WithEnvironment("RemoteApp__ApiKey", key)
+    .WithEnvironment("RemoteApp__RemoteAppUrl", framework.GetEndpoint("http"))
+    .WithHttpsHealthCheck("/alive")
+    .WithRelationship(framework.Resource, "YARP");
 
 builder.Build().Run();

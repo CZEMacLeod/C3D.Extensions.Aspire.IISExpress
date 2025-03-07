@@ -1,13 +1,11 @@
-﻿using System.Web;
-using System.Web.Mvc;
+﻿using System.Web.Mvc;
 
-namespace SWAFramework
+namespace SWAFramework;
+
+public class FilterConfig
 {
-    public class FilterConfig
+    public static void RegisterGlobalFilters(GlobalFilterCollection filters)
     {
-        public static void RegisterGlobalFilters(GlobalFilterCollection filters)
-        {
-            filters.Add(new HandleErrorAttribute());
-        }
+        filters.Add(new HandleErrorAttribute());
     }
 }

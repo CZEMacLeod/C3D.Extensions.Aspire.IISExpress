@@ -13,15 +13,15 @@
     <PackageReference Include="Aspire.Hosting.AppHost" Version="9.1.0" />
     <PackageReference Include="Aspire.Hosting.SqlServer" Version="9.1.0" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\..\..\src\C3D\Extensions\Aspire\IISExpress\C3D.Extensions.Aspire.IISExpress.csproj" IsAspireProjectResource="false" />
+  </ItemGroup>
+  <Import Project="..\..\..\src\C3D\Extensions\Aspire\IISExpress\C3D.Extensions.Aspire.IISExpress.props" />
+  
+  <ItemGroup>
     <ProjectReference Include="..\EF6\EF6WebApp.csproj">
       <NoWarn>ASPIRE004</NoWarn>
-    </ProjectReference>
-    
+    </ProjectReference>  
   </ItemGroup>
-
-  <Import Project="..\..\..\src\C3D\Extensions\Aspire\IISExpress\C3D.Extensions.Aspire.IISExpress.props" />
 
 </Project>

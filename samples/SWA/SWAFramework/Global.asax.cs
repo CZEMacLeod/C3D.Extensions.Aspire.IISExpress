@@ -25,7 +25,7 @@ public class MvcApplication : OpenTelemeteryApplication
             {
                 options.RegisterKey<int>("CoreCount");
             })
-            .AddRemoteAppServer(options => options.ApiKey = ConfigurationManager.AppSettings["RemoteAppApiKey"])
+            .AddRemoteAppServer(options => options.ApiKey = ConfigurationManager.AppSettings["RemoteApp:ApiKey"])
             .AddSessionServer(options =>
             {
             });

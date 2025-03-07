@@ -30,7 +30,7 @@ namespace SWAFramework.Controllers
 
         public ActionResult Env()
         {
-            ViewBag.Message = $"RemoteApp Key {ConfigurationManager.AppSettings["RemoteAppApiKey"]}";
+            ViewBag.Message = $"RemoteApp Key {ConfigurationManager.AppSettings["RemoteApp:ApiKey"]}";
             var dict = System.Environment.GetEnvironmentVariables()
                 .Keys.Cast<string>()
                 .ToDictionary(k => k, k => System.Environment.GetEnvironmentVariable(k));
