@@ -29,7 +29,14 @@ internal class AttachDebuggerHook : BackgroundService
                 resource.Annotations.OfType<DebugAttachResource>().Any(dar => dar.DebugMode == DebugMode.VisualStudio) &&
                 !resource.Annotations.OfType<DebugerAttachedResource>().Any())
             {
-                DebugAttach(notification, resource);
+                try
+                {
+                    DebugAttach(notification, resource);
+                }
+                catch (Exception e)
+                {
+                    logger.LogError(e, "An error occurred trying to attach debugger for {name}: {message}", resource.Name, e.Message);
+                }
             }
         }
     }

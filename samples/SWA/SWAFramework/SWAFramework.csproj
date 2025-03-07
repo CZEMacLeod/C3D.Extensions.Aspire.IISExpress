@@ -1,7 +1,9 @@
-﻿<Project Sdk="MSBuild.SDK.SystemWeb/4.0.93">
+﻿<Project Sdk="MSBuild.SDK.SystemWeb/4.0.88">
   <PropertyGroup>
     <TargetFramework>net48</TargetFramework>
-    <Copyright>Copyright © 2024</Copyright>
+    <Copyright>Copyright © 2025</Copyright>
+    <LangVersion>10.0</LangVersion>
+
     <GeneratedBindingRedirectsAction>Overwrite</GeneratedBindingRedirectsAction>
     <MicrosoftNetCompilersToolset_Version>4.13.0</MicrosoftNetCompilersToolset_Version>
     <MicrosoftCodeDomProvidersDotNetCompilerPlatform_Version>4.1.0</MicrosoftCodeDomProvidersDotNetCompilerPlatform_Version>
@@ -28,19 +30,27 @@
     <None Include="libman.json" />
     <None Include="Properties\launchSettings.json" />
   </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Configuration.ConfigurationBuilders.Environment" Version="3.0.0" />
+  </ItemGroup>
+  <ItemGroup Label="SystemWebAdapters">
+    <PackageReference Include="Microsoft.AspNetCore.DataProtection.SystemWeb" Version="2.3.0" />
+    <PackageReference Include="Microsoft.AspNetCore.SystemWebAdapters.FrameworkServices" Version="2.0.0" />
+  </ItemGroup>
   <ItemGroup Label="OpenTelemetry">
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.2" />
-    
+
     <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.11.2" />
     <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.11.2" />
     <PackageReference Include="Grpc.Core" Version="2.46.6" />
-    
+
     <PackageReference Include="OpenTelemetry.Instrumentation.Runtime" Version="1.11.1" />
     <PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.11.1" />
-    
-    <PackageReference Include="OpenTelemetry.Instrumentation.AspNet" Version="1.9.0-beta.1" />
-    <PackageReference Include="OpenTelemetry.Instrumentation.AspNet.TelemetryHttpModule" Version="1.9.0-beta.1" />
+
+    <PackageReference Include="OpenTelemetry.Instrumentation.AspNet" Version="1.11.0-beta.2" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.AspNet.TelemetryHttpModule" Version="1.11.0-beta.2" />
   </ItemGroup>
+  
   <ItemGroup>
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="Antlr" Version="3.5.0.2" />
@@ -50,5 +60,10 @@
     <PackageReference Include="Microsoft.Web.LibraryManager.Build" Version="2.1.175" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="WebGrease" Version="1.6.0" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\src\C3D\Extensions\SystemWeb\OpenTelemetry\Application\C3D.Extensions.SystemWeb.OpenTelemetry.Application.csproj" />
+    <ProjectReference Include="..\SWALibrary\SWALibrary.csproj" />
   </ItemGroup>
 </Project>

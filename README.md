@@ -2,8 +2,20 @@
 
 A way to reference and execute an IIS Express based project (ASP.NET 4.x) using Aspire
 
-## C3D.Extensions.Aspire.WaitFor
-A subset of the work by David Fowler [WaitForDependenciesAspire](https://github.com/davidfowl/WaitForDependenciesAspire)
+## C3D.Extensions.SystemWeb.OpenTelemetry.Application
+
+An HttpApplication derived object that configures OTLP etc. automatically.
+`Application_Start` method is virtual and can be overridden.
+OTLP exporter will automatically start and stop with the application.
+You can customize each type of telemetry, by adding to or completely overriding each of
+- `ConfigureLogging`
+- `ConfigureMetrics`
+- `ConfigureTracing`
+
+The following methods are also provided for ease of use
+- `CreateServiceCollection` - Initialize the ServiceCollection
+- `ConfigureServiceProvider` - This could be used to register your own objects in a DI container, or adjust things like logging.
+- `UseServiceProvider` - This is called after the service provider is built, but before OTLP is started.
 
 ## Samples
 
@@ -33,9 +45,7 @@ These can be set with
 - `None` means do not attach the debugger.
 - `Environment` sets the environment variable `Launch_Debugger_On_Start` to `true`. 
 This is checked for by a `PreApplicationStartMethod` which will attempt to launch a debugger.
-- `VSJITDebugger` uses a hook to use `vsjitdebugger.exe` to launch and attach a debugger to IIS Express after it starts.
-
-Unfortunately, it is not generally possible to attach the currently running instance of VisualStudio.
+- `VisualStudio` uses a hook and COM to get the running IDE and attach the debugger to IIS Express after it starts.
 
 ## Known Issues
 - The `$(SolutionDir)\.vs\$(SolutionName)\config\applicationhost.config` file is not checked in as part of the source so you will probably have to manually select each web application and run it once manually to setup the appropriate information.

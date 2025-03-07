@@ -1,70 +1,78 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using OpenTelemetry;
+using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
 using System.Web.Hosting;
 
-namespace C3D.Extensions.SystemWeb.OpenTelemetry.Application
+namespace C3D.Extensions.SystemWeb.OpenTelemetry.Application;
+
+public class OpenTelemeteryApplication : System.Web.HttpApplication
 {
-    public class OpenTelemeteryApplication : System.Web.HttpApplication
+
+    protected virtual void Application_Start()
+    {
+        var services = CreateServiceCollection();
+
+        services.AddLogging(logging =>
+        {
+            logging.Configure(options =>
+            {
+                options.ActivityTrackingOptions =
+                    ActivityTrackingOptions.SpanId |
+                    ActivityTrackingOptions.TraceId |
+                    ActivityTrackingOptions.ParentId;
+            });
+            logging.AddOpenTelemetry(ot =>
+            {
+                ot.IncludeFormattedMessage = true;
+                ot.IncludeScopes = true;
+                ot.ParseStateValues = true;
+            });
+        });
+
+        services.AddOpenTelemetry()
+            .WithTracing(ConfigureTracing)
+            .WithMetrics(ConfigureMetrics)
+            .WithLogging(ConfigureLogging)
+        .UseOtlpExporter();
+
+        ConfigureServiceProvider(services);
+
+        var serviceProvider = services.BuildServiceProvider();
+
+        UseServiceProvider(serviceProvider);
+
+        HostingEnvironment.RegisterObject(new OpenTelemetryRunner(serviceProvider));
+    }
+
+    protected virtual void ConfigureLogging(LoggerProviderBuilder logging)
     {
 
-        protected virtual void Application_Start()
-        {
-            var services = new ServiceCollection();
+    }
 
-            services.AddLogging(logging =>
-            {
-                logging.Configure(options =>
-                {
-                    options.ActivityTrackingOptions =
-                        ActivityTrackingOptions.SpanId |
-                        ActivityTrackingOptions.TraceId |
-                        ActivityTrackingOptions.ParentId;
-                });
-                logging.AddOpenTelemetry(ot =>
-                {
-                    ot.IncludeFormattedMessage = true;
-                    ot.IncludeScopes = true;
-                    ot.ParseStateValues = true;
-                });
-            });
+    protected virtual void ConfigureMetrics(MeterProviderBuilder metrics)
+    {
+        metrics
+            .AddAspNetInstrumentation()
+            .AddRuntimeInstrumentation();
+    }
 
-            services.AddOpenTelemetry()
-                .WithTracing(tracing =>
-                {
-                    tracing
-                        .AddAspNetInstrumentation()
-                        .AddHttpClientInstrumentation();
-                })
-                .WithMetrics(metrics =>
-                {
-                    metrics
-                        .AddAspNetInstrumentation()
-                        .AddAspNetInstrumentation()
-                        .AddRuntimeInstrumentation();
-                })
-                .WithLogging(logging =>
-                {
-                })
-            .UseOtlpExporter();
+    protected virtual void ConfigureTracing(TracerProviderBuilder tracing)
+    {
+        tracing
+            .AddAspNetInstrumentation()
+            .AddHttpClientInstrumentation();
+    }
 
-            ConfigureServiceProvider(services);
+    protected virtual ServiceCollection CreateServiceCollection() => new ServiceCollection();
 
-            var serviceProvider = services.BuildServiceProvider();
+    protected virtual void ConfigureServiceProvider(ServiceCollection services)
+    {
+    }
 
-            UseServiceProvider(serviceProvider);
-
-            HostingEnvironment.RegisterObject(new OpenTelemetryRunner(serviceProvider));
-        }
-
-        protected virtual void ConfigureServiceProvider(ServiceCollection services)
-        {
-        }
-
-        protected virtual void UseServiceProvider(ServiceProvider serviceProvider)
-        {
-        }
+    protected virtual void UseServiceProvider(ServiceProvider serviceProvider)
+    {
     }
 }
