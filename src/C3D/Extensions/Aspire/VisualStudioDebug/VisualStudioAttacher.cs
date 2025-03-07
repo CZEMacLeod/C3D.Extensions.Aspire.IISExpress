@@ -70,7 +70,12 @@ internal static class VisualStudioAttacher
         var debugger = (EnvDTE90.Debugger3)dte.Debugger;
         var transport = debugger.Transports.Item("default");
 
-        return transport.Engines.Cast<EnvDTE80.Engine>().Select(e=>e.Name).ToList();
+        var list = new List<string>();
+        foreach(EnvDTE80.Engine e in transport.Engines)
+        {
+            list.Add(e.Name);
+        }
+        return list;
     }
 
     /// <summary>

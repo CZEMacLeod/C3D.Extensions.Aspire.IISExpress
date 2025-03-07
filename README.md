@@ -1,6 +1,17 @@
-# C3D.Extensions.Aspire.IISExpress
+# AppHost Packages
+
+## C3D.Extensions.Aspire.IISExpress
 
 A way to reference and execute an IIS Express based project (ASP.NET 4.x) using Aspire
+
+## C3D.Extensions.Aspire.VisualStudioDebug
+
+A way to get VisualStudio to attach the debugger for the AspireHost to a running executable project (such as an `IISExpressProjectResource`).
+Uses a BackgroundService to montior for the Process Id (via `executable.pid`) and COM to grab the running object of the VisualStudio `DTE`.
+Appropriate debug engines can be enabled, such as `Managed (.NET Framework 4.x)` to allow debugging of IIS Express based ASP.Net 4.x Projects.
+In theory this could be extended to attach the debugger to apps in docker containers, or other languages such as nodejs.
+
+# Client Packages
 
 ## C3D.Extensions.SystemWeb.OpenTelemetry.Application
 
@@ -17,15 +28,15 @@ The following methods are also provided for ease of use
 - `ConfigureServiceProvider` - This could be used to register your own objects in a DI container, or adjust things like logging.
 - `UseServiceProvider` - This is called after the service provider is built, but before OTLP is started.
 
-## Samples
+# Samples
 
-### Simple
+## Simple
 A basic project based on [MSBuild.SDK.SystemWeb](https://github.com/CZEMacLeod/MSBuild.SDK.SystemWeb)
 which shows a very basic MVC5 application using the new SDK style, and can be launched by Aspire.
 It supports OpenTelemetry and will correctly connect to the Aspire Dashboard.
 Note that being IIS (Express) based, it does not start until the first web request, so you will need to launch it using the link on the dashboard.
 
-### EF6
+## EF6
 A more advanced project which uses Microsoft.Data.SqlClient to allow connections to any SQL Server using the latest technologies.
 This has some code to allow connection strings to be copied from web.config to a Microsoft.Extensions.Configuration based version,
 and creates a DependencyInjection container based on Microsoft.Extensions.DependencyInjection.
@@ -35,7 +46,7 @@ This is a nieve implementation that does not deal with request scopes - all obje
 A localdb is created in the App_Data folder if you run the application directly and each time a new blog is created on startup.
 If launched via aspire, it will wait for the sql server to start then start IISExpress. The database will be created afresh each time and there will only be a single blog entry.
 
-### SWA
+## SWA
 This shows using Aspire to handle [Incremental ASP.NET to ASP.NET Core Migration](https://learn.microsoft.com/aspnet/core/migration/inc/overview).
 This consists of a Full Framework example app using MVC, with some of the code from the RemoteSession example added in.
 The Core app is lightweight and only contains YARP, a Session variable route (per the RemoteSession example), OTLP telemetry, and HeathChecks.
@@ -43,9 +54,11 @@ Apire sets up a randomized app key used by both applications, and wires up the U
 Traces show the request span of the core app, the proxy request, and the framework processing.
 
 
-## Debugging
-Because Aspire doesn't natively know how to attach the debugger to IIS Express, two techniques can be used.
-These can be set with one of
+# Debugging
+Because Aspire doesn't natively know how to attach the debugger to IIS Express, when adding an IISExpressProject,
+the `VisualStudioDebug` mechanism will be enabled by default with `DebugMode.VisualStudio`.
+
+This can be overridden with one of
 ```cs
 	.WithDebugger()
 	.WithDebugger(DebugMode.None)
