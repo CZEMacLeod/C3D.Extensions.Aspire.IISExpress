@@ -61,21 +61,55 @@ internal static class VisualStudioAttacher
         return null;
     }
 
-    public static IEnumerable<string>? GetDebugEngines(Process visualStudioProcess)
+    public static IEnumerable<(string id, string name)> GetDebugTransports(Process visualStudioProcess)
     {
         if (!TryGetVsInstance(visualStudioProcess.Id, out _DTE? visualStudioInstance))
-            return null;
+            yield break;
 
         var dte = (EnvDTE80.DTE2)visualStudioInstance;
         var debugger = (EnvDTE90.Debugger3)dte.Debugger;
-        var transport = debugger.Transports.Item("default");
-
-        var list = new List<string>();
-        foreach(EnvDTE80.Engine e in transport.Engines)
+        foreach (EnvDTE80.Transport e in debugger.Transports)
         {
-            list.Add(e.Name);
+            yield return (e.ID, e.Name);
         }
-        return list;
+    }
+
+    public static IEnumerable<(int id, string name, bool isDebugged)> GetDebugProcesses(Process visualStudioProcess, string transport, string? qualifier)
+    {
+        if (!TryGetVsInstance(visualStudioProcess.Id, out _DTE? visualStudioInstance))
+            yield break;
+
+        var dte = (EnvDTE80.DTE2)visualStudioInstance;
+        var debugger = (EnvDTE90.Debugger3)dte.Debugger;
+        EnvDTE80.Transport port = debugger.Transports.Item(transport);
+        if (port is null)
+        {
+            yield break;
+        }
+        Processes processes = debugger.GetProcesses(port, qualifier ?? string.Empty);
+        foreach (EnvDTE80.Process2 e in processes)
+        {
+            yield return (e.ProcessID, e.Name, e.IsBeingDebugged);
+        }
+    }
+
+    public static IEnumerable<(string id, string name, int result)> GetDebugEngines(Process visualStudioProcess, string transport = "default")
+    {
+        if (!TryGetVsInstance(visualStudioProcess.Id, out _DTE? visualStudioInstance))
+            yield break;
+
+        var dte = (EnvDTE80.DTE2)visualStudioInstance;
+        var debugger = (EnvDTE90.Debugger3)dte.Debugger;
+        var port = debugger.Transports.Item(transport);
+        if (port is null)
+        {
+            yield break;
+        }
+
+        foreach (EnvDTE80.Engine e in port.Engines)
+        {
+            yield return (e.ID, e.Name, e.AttachResult);
+        }
     }
 
     /// <summary>
@@ -90,15 +124,48 @@ internal static class VisualStudioAttacher
     /// <exception cref="InvalidOperationException">
     /// Thrown when the application process is null.
     /// </exception>
-    public static void AttachVisualStudioToProcess(Process visualStudioProcess, Process applicationProcess, params string[] engines)
+    public static void AttachVisualStudioToProcess(Process visualStudioProcess, int processId, params string[] engines)
+        => AttachVisualStudioToProcess(visualStudioProcess,
+                vs => vs.Debugger.LocalProcesses
+                        .Cast<DTEProcess>()
+                        .FirstOrDefault(process => process.ProcessID == processId),
+                engines);
+
+    /// <summary>
+    /// The method to use to attach visual studio to a process by specifying connection information.
+    /// </summary>
+    /// <param name="visualStudioProcess">
+    /// The visual studio process to attach to.
+    /// </param>
+    /// <param name="applicationProcess">
+    /// The application process that needs to be debugged.
+    /// </param>
+    /// <exception cref="InvalidOperationException">
+    /// Thrown when the application process is null.
+    /// </exception>
+    public static void AttachVisualStudioToProcess(Process visualStudioProcess, string transport, string? qualifier, params string[] engines)
+    => AttachVisualStudioToProcess(visualStudioProcess,
+            vs =>
+            {
+                var dte = (EnvDTE80.DTE2)vs;
+                var debugger = (EnvDTE90.Debugger3)dte.Debugger;
+                EnvDTE80.Transport port = debugger.Transports.Item(transport);
+                Processes processes = debugger.GetProcesses(port, qualifier ?? string.Empty);
+                if (processes.Count!=1)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(qualifier), "Qualifer did not result in a single process");
+                }
+                return (DTEProcess)processes.Item(1);
+            },
+            engines);
+
+    private static void AttachVisualStudioToProcess(Process visualStudioProcess, Func<DTE, DTEProcess?> applicationProcess, params string[] engines)
     {
 
         if (TryGetVsInstance(visualStudioProcess.Id, out _DTE? visualStudioInstance))
         {
             // Find the process you want the VS instance to attach to...
-            DTEProcess? processToAttachTo =
-                visualStudioInstance.Debugger.LocalProcesses.Cast<DTEProcess>()
-                                    .FirstOrDefault(process => process.ProcessID == applicationProcess.Id);
+            DTEProcess? processToAttachTo = applicationProcess(visualStudioInstance);
 
             // Attach to the process.
             if (processToAttachTo != null)
@@ -107,13 +174,12 @@ internal static class VisualStudioAttacher
             }
             else
             {
-                throw new InvalidOperationException(
-                    "Visual Studio process cannot find specified application '" + applicationProcess.Id + "'");
+                throw new InvalidOperationException("Visual Studio cannot find specified application");
             }
         }
     }
 
-    private static IEnumerable<Process> GetVisualStudioProcesses() => 
+    private static IEnumerable<Process> GetVisualStudioProcesses() =>
         Process.GetProcesses()
             .Where(o => o.ProcessName.Contains("devenv", StringComparison.OrdinalIgnoreCase))
             .ToArray();

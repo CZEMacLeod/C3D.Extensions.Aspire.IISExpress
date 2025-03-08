@@ -12,7 +12,8 @@ public static class IISExpressEntensions
 {
     public static IResourceBuilder<IISExpressProjectResource> WithDebugger(this IResourceBuilder<IISExpressProjectResource> resourceBuilder,
         DebugMode debugMode = DebugMode.VisualStudio) =>
-        resourceBuilder.WithDebugger(debugMode, "Managed (.NET Framework 4.x)");
+        DebugResourceExtensions.WithDebugger(resourceBuilder, debugMode)
+            .WithDebugEngine("Managed (.NET Framework 4.x)");
 
     public static IDistributedApplicationBuilder AddIISExpressConfiguration(this IDistributedApplicationBuilder builder,
         Action<IISExpressOptions>? options = null)

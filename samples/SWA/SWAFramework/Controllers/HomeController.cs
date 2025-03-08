@@ -30,6 +30,10 @@ namespace SWAFramework.Controllers
 
         public ActionResult Env()
         {
+            if (System.Diagnostics.Debugger.IsAttached)
+            {
+                System.Diagnostics.Debugger.Break();
+            }
             ViewBag.Message = $"RemoteApp Key {ConfigurationManager.AppSettings["RemoteApp:ApiKey"]}";
             var dict = System.Environment.GetEnvironmentVariables()
                 .Keys.Cast<string>()
