@@ -5,6 +5,7 @@ A set of packages to make it easier to work with IIS Express / System.Web projec
 # AppHost Packages
 
 ## [C3D.Extensions.Aspire.IISExpress](src/C3D/Extensions/Aspire/IISExpress/README.md)
+## [C3D.Extensions.Aspire.Node](src/C3D/Extensions/Aspire/Node/README.md)
 ## [C3D.Extensions.Aspire.VisualStudioDebug](src/C3D/Extensions/Aspire/VisualStudioDebug/README.md)
 
 # Support Packages
