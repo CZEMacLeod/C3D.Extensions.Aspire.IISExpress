@@ -6,6 +6,10 @@
     <Nullable>enable</Nullable>
     <LangVersion>10.0</LangVersion>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="README.md" />
+  </ItemGroup>
   <ItemGroup>
     <PackageReference Include="envdte" Version="17.13.40008" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.0" />

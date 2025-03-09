@@ -9,7 +9,6 @@
   <ItemGroup>
     <PackageReference Include="Aspire.Hosting" Version="9.1.0" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\..\VisualStudioDebug\C3D.Extensions.VisualStudioDebug.csproj" />
   </ItemGroup>

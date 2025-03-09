@@ -1,0 +1,108 @@
+<Project>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile Condition="'$(AssemblyOriginatorKeyFile)'=='' AND EXISTS('$(MSBuildThisFileDirectory)build/cloud3d-codesign.snk')">$(MSBuildThisFileDirectory)build/cloud3d-codesign.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile Condition="'$(AssemblyOriginatorKeyFile)'==''">$(MSBuildThisFileDirectory)build/Test.snk</AssemblyOriginatorKeyFile>
+    <SignAssembly Condition="EXISTS('$(AssemblyOriginatorKeyFile)')">true</SignAssembly>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <GenerateNuspecDependsOn>SetAuthors;SetPackageTags;SetPackageDescription;$(GenerateNuspecDependsOn)</GenerateNuspecDependsOn>
+  </PropertyGroup>
+
+  <Target Name="SetAuthors">
+    <RemoveDuplicates
+            Inputs="@(Author)">
+      <Output
+          TaskParameter="Filtered"
+          ItemName="_Author"/>
+    </RemoveDuplicates>
+    <PropertyGroup>
+      <Authors Condition="'@(_Author)'!=''">@(_Author, ',')</Authors>
+    </PropertyGroup>
+  </Target>
+
+  <Target Name="SetPackageTags">
+    <RemoveDuplicates
+            Inputs="@(PackageTag)">
+      <Output
+          TaskParameter="Filtered"
+          ItemName="_PackageTag"/>
+    </RemoveDuplicates>
+    <PropertyGroup>
+      <PackageTags Condition="'$(PackageTags)'==''">@(_PackageTag, ' ')</PackageTags>
+    </PropertyGroup>
+  </Target>
+
+  <Target Name="SetPackageDescription" DependsOnTargets="GetBuildVersion">
+    <PropertyGroup>
+      <PackageDescription>
+        Assembly Version: $(AssemblyVersion)
+        File Version: $(AssemblyFileVersion)
+        Informational Version: $(AssemblyInformationalVersion)
+        Build Configuration: $(Configuration)
+        $(AssemblyDescription)
+      </PackageDescription>
+    </PropertyGroup>
+    <Message Text="Package Description: $(PackageDescription)" Importance="high" />
+  </Target>
+
+  <Target Name="PackIfChanged">
+    <ItemGroup>
+      <_Temporary Remove="@(_Temporary)" />
+      <_Temporary Include="$(git_commit_ids)" />
+    </ItemGroup>
+    <ItemGroup>
+      <GitProjectDirectory Include="$(MSBuildProjectDirectory)" />
+      <GitProjectDirectory Include="@(ProjectReference->DirectoryName())" />
+    </ItemGroup>
+    <Message Importance="high" Text="Project: $(MSBuildProjectName)" />
+    <Message Importance="high" Text="Git Commit IDs: %(_Temporary.Identity)" />
+    <Message Importance="high" Text="GitProjectDirectory: $([MSBuild]::MakeRelative($(SolutionDir),'%(GitProjectDirectory.Identity)'))" />
+
+    <PropertyGroup>
+      <_GitCommand>git log --pretty=tformat:"%%H" -n1 .</_GitCommand>
+    </PropertyGroup>
+    <Exec Command="$(_GitCommand)" WorkingDirectory="%(GitProjectDirectory.Identity)" ConsoleToMSBuild="true">
+      <Output TaskParameter="ConsoleOutput" ItemName="ProjectCommitID" />
+    </Exec>
+    <ItemGroup>
+      <ProjectCommitID Condition="'%(Identity)' != '' AND
+                                  '@(ProjectCommitID)' != '' AND
+                                  '@(_Temporary)' != ''">
+        <CommitIDFound>true</CommitIDFound>
+      </ProjectCommitID>
+    </ItemGroup>
+    <Message Importance="high" Text="ProjectCommitID: %(ProjectCommitID.Identity) %(ProjectCommitID.CommitIDFound)" />
+
+    <Message Importance="high" Text="IsPackable: $(IsPackable)" />
+    <Message Importance="high" Text="IsTestProject: $(IsTestProject)" />
+
+    <PropertyGroup>
+      <CommitIDFound Condition="'%(ProjectCommitID.CommitIDFound)'=='true'">true</CommitIDFound>
+      <CommitIDFound Condition="'$(CommitIDFound)'==''">false</CommitIDFound>
+    </PropertyGroup>
+    <Message Importance="high" Text="CommitIDFound: $(CommitIDFound)" />
+    <ItemGroup>
+      <_Temporary Remove="@(_Temporary)" />
+      <_Temporary Include="$(ProjectToBuild)" />
+    </ItemGroup>
+    <Message Importance="high" Text="Projects To Build: %(_Temporary.Identity)" />
+    <PropertyGroup>
+      <BuildProject>$(CommitIDFound)</BuildProject>
+      <BuildProject Condition="'$(MSBuildProjectName)'=='%(_Temporary.Identity)'">true</BuildProject>
+    </PropertyGroup>
+    <Message Importance="high" Text="BuildProject: $(BuildProject)" />
+
+    <ItemGroup>
+      <_Temporary Remove="@(_Temporary)" />
+    </ItemGroup>
+
+    <!-- Pack libraries -->
+    <MSBuild Projects="$(MSBuildProjectFile)" Targets="Pack" Condition="'$(IsPackable)'=='true' AND '$(BuildProject)'=='true'" />
+    <!-- Build sample and test projects to ensure they can build correctly -->
+    <MSBuild Projects="$(MSBuildProjectFile)" Targets="Build" Condition="'$(IsPackable)'=='false' AND '$(BuildProject)'=='true'" />
+    <!-- Rebuild test projects with project references for code coverage -->
+    <MSBuild Projects="$(MSBuildProjectFile)" Targets="Build" Condition="'$(IsTestProject)'=='true' AND '$(BuildProject)'=='true'" />
+    <Message Importance="high" Text="##vso[build.addbuildtag]$(MSBuildProjectName)" Condition="'$(IsPackable)'=='true' AND '$(BuildProject)'=='true'" />
+  </Target>
+</Project>

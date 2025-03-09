@@ -1,0 +1,290 @@
+parameters:
+  - name: timestamper
+    type: string
+    displayName: Time Stamper URL
+    default: 'http://timestamp.acs.microsoft.com'
+    values:
+    - 'http://timestamp.acs.microsoft.com'
+    - 'http://timestamp.sectigo.com'
+    - 'http://timestamp.digicert.com'
+    - 'http://aatl-timestamp.globalsign.com/tsa/aohfewat2389535fnasgnlg5m23'
+    - 'http://timestamp.entrust.net/TSS/RFC3161sha2TS'
+    - 'http://kstamp.keynectis.com/KSign/'
+    - 'http://tsa.quovadisglobal.com/TSS/HttpTspServer'
+    - 'http://kstamp.keynectis.com/KSign/'
+    - 'http://tss.accv.es:8318/tsa'
+    - 'http://tsa.izenpe.com'
+    - 'http://timestamp.sectigo.com/qualified'
+    - 'http://timestamp.comodoca.com'
+  - name: packagesigninginterval
+    type: number
+    displayName: Package Signing Interval
+    default: 1
+  - name: git_commit_ids
+    type: string
+    displayName: Build Commit IDs
+    default: ''
+  - name: project_to_build
+    type: string
+    displayName: Project To Build
+    default: ' '
+    values:
+      - ' '
+      - 'C3D.Extensions.Aspire.IISExpress'
+      - 'C3D.Extensions.Aspire.VisualStudioDebug'
+      - 'C3D.Extensions.SystemWeb.OpenTelemetry.Application' 
+      - 'C3D.Extensions.VisualStudioDebug' 
+
+trigger:
+  batch: true
+  branches:
+    include:
+    - main
+  paths:
+    exclude:
+    - docs/*
+    - README.md
+
+pr: none
+
+pool:
+  vmImage: windows-latest
+
+variables:
+- group: Github-Packages
+- group: 'c3d-devops'
+- name: solution
+  value: 'C3D.Extensions.Aspire.IISExpress.sln'
+- name: buildPlatform
+  value: 'Any CPU'
+- name: buildConfiguration
+  value: 'Release'
+- name: buildMachine
+  value: '$(Agent.MachineName)'
+- name: buildUser
+  value: '$(Build.QueuedBy)'
+- name: 'timestamper'
+  value: ${{ parameters.timestamper }}
+- name: 'git_commit_ids'
+  value: ${{ parameters.git_commit_ids }}
+- name: 'project_to_build'
+  value: ${{ parameters.project_to_build }}
+- name: 'target'
+  value: 'PackIfChanged'
+- name: 'nuget_version'
+  value: '>=6.6.1'
+
+steps:
+- checkout: self
+  clean: true
+  submodules: true
+  persistCredentials: true
+  fetchDepth: 0
+  fetchTags: true
+
+- powershell: 'Write-Host ("##vso[task.setvariable variable=MSBuildEmitSolution;]0")'
+  displayName: 'Ensure MSBuildEmitSolution is not set'
+
+- task: DownloadSecureFile@1
+  displayName: 'Download secure file SNK'
+  name: snk
+  inputs:
+    secureFile: '61ad38e7-05ff-4421-aea8-e3241b75c7a1'
+
+- task: PowerShell@2
+  displayName: 'Get Commit IDs'
+  env:
+    SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+  inputs:
+   targetType: inline
+   script: |
+      $url = "$($env:SYSTEM_TEAMFOUNDATIONCOLLECTIONURI)$env:SYSTEM_TEAMPROJECTID/_apis/build/builds/$($env:BUILD_BUILDID)/changes?api-version=5.0"
+      Write-Host "URL: $url"
+      $changes = Invoke-RestMethod -Uri $url -Method Get -ContentType "application/json" -Headers @{
+          Authorization = "Bearer $env:SYSTEM_ACCESSTOKEN"
+      }
+      Write-Host "Commits since last (successful) build: $($changes.count)"
+      $ids = $changes.value | Select-Object -ExpandProperty id
+      $git_commit_ids = $ids -join ";"
+      Write-Host "Commit IDs: $git_commit_ids"
+      Write-Host ("##vso[task.setvariable variable=git_commit_ids;]$git_commit_ids")
+
+- task: UseDotNet@2
+  displayName: 'Use .NET SDK'
+  inputs:
+    packageType: 'sdk'
+    useGlobalJson: true
+    installationPath: $(Agent.ToolsDirectory)/dotnet
+
+- task: UseDotNet@2
+  displayName: 'Use .NET Runtime 8.0.x'
+  inputs:
+    packageType: 'runtime'
+    version: "8.0.x"
+    installationPath: $(Agent.ToolsDirectory)/dotnet
+
+- task: UseDotNet@2
+  displayName: 'Use .NET Runtime 9.0.x'
+  inputs:
+    packageType: 'runtime'
+    version: "9.0.x"
+    installationPath: $(Agent.ToolsDirectory)/dotnet
+
+# Install the code signing tool
+- task: DotNetCoreCLI@2
+  inputs:
+    command: custom
+    custom: tool
+    arguments: update sign --global --version 0.9.1-beta.23530.1
+  displayName: Install SignTool tool
+    
+- task: NuGetToolInstaller@1
+  displayName: 'Use NuGet $(nuget_version)'
+  inputs:
+    versionSpec: '$(nuget_version)'
+    checkLatest: true
+
+- task: VisualStudioTestPlatformInstaller@1
+  inputs:
+    packageFeedSelector: 'nugetOrg'
+    versionSelector: 'latestStable'
+
+- task: NuGetCommand@2
+  inputs:
+    command: 'restore'
+    restoreSolution: '$(solution)'
+    feedsToUse: 'config'
+    includeNugetOrg: 'true'
+    externalFeedCredentials: 'github-czemacleod-packages'
+
+- task: VSBuild@1
+  inputs:
+    solution: '$(solution)'
+    platform: '$(buildPlatform)'
+    configuration: '$(buildConfiguration)'
+    clean: true
+    msbuildArgs: '/t:$(target) /p:ProjectToBuild=$(project_to_build) /p:ContinuousIntegrationBuild=true /p:PackageOutputPath="$(Build.ArtifactStagingDirectory)" /p:BuildUser="$(buildUser)" /p:BuildMachine="$(buildMachine)" /p:AssemblyOriginatorKeyFile="$(snk.secureFilePath)"'
+
+- task: VSTest@2
+  inputs:
+   testSelector: 'testAssemblies'
+   testAssemblyVer2: |
+     **\*.Tests.dll
+     !**\*TestAdapter.dll
+     !**\*TestCentric*.dll
+     !**\*TestHost*.dll
+     !**\*TestPlatform*.dll
+     !**\obj\**
+   searchFolder: 'test'
+   vstestLocationMethod: 'version'
+   vsTestVersion: 'toolsInstaller'
+   platform: '$(buildPlatform)'
+   configuration: '$(buildConfiguration)'
+   codeCoverageEnabled: true
+   minimumExpectedTests: 0
+   failOnMinTestsNotRunFail: false
+   failIfCoverageEmpty: false
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(build.artifactstagingdirectory)'
+
+- task: PowerShell@2
+  displayName: 'Detect packages'
+  inputs:
+   targetType: inline
+   script: |
+     $dir = $env:BUILD_ARTIFACTSTAGINGDIRECTORY + "\*.nupkg"
+     Write-Host "Package Directory: $dir"
+     $packages = Get-ChildItem -Path $dir -Recurse
+     $ids = $packages | Select-Object -ExpandProperty name
+     Write-Host "Packages: $ids"
+     Write-Host "Package Count: $($packages.Count)"
+     Write-Host ("##vso[task.setvariable variable=package_count;]$($packages.Count)")
+
+# Run the signing command
+- task: PowerShell@2
+  displayName: Sign packages
+  condition: and(succeeded(), ne(variables['package_count'],0))
+  inputs:
+    targetType: inline
+    script: |
+      sign code azure-key-vault `
+      "**/*.nupkg" `
+      --base-directory "$(Build.ArtifactStagingDirectory)" `
+      -d "Cynthia Z E MacLeod" `
+      -u "https://github.com/CZEMacLeod" `
+      -kvu "$(SignVaultURL)" `
+      -kvc "c3d-codesign" `
+      -v information `
+      -t "$(timestamper)" `
+      --azure-key-vault-tenant-id "$(SignTenantId)" `
+      --azure-key-vault-client-id "$(SignClientId)" `
+      --azure-key-vault-client-secret '$(SignClientSecret)'
+
+- task: CopyFiles@2
+  displayName: Create nuget publish config
+  inputs:
+    sourceFolder: '$(Build.SourcesDirectory)\build'
+    contents: 'nuget.publish.config'
+    targetFolder: $(Build.ArtifactStagingDirectory)
+
+- task: PowerShell@2
+  displayName: Build Nuget Source URL
+  inputs:
+    targetType: 'inline'
+    script: |
+      $owner = "$env:GITHUB_OWNER"
+      $source = "https://nuget.pkg.github.com/" + $owner.ToLower() + "/index.json"
+      Write-Host ("Nuget Source URL = $source")
+      Write-Host ("##vso[task.setvariable variable=NUGET_SOURCE]$source")
+  env:
+    GITHUB_OWNER: $(GITHUB_OWNER)
+
+- script: nuget.exe sources Add -NonInteractive -Name GitHub -Source "%NUGET_SOURCE%" -Username "%GITHUB_USERNAME%" -Password "%GITHUB_TOKEN%" -ConfigFile %NUGET_CONFIG%
+  displayName: Add github package source
+  env:
+    GITHUB_OWNER: $(GITHUB_OWNER)
+    GITHUB_USERNAME: $(GITHUB_USERNAME)
+    GITHUB_TOKEN: $(GITHUB_TOKEN)
+    NUGET_SOURCE: $(NUGET_SOURCE)
+    NUGET_CONFIG: $(Build.ArtifactStagingDirectory)\nuget.publish.config
+
+- script: nuget push -Source GitHub -ConfigFile %NUGET_CONFIG% -SkipDuplicate "%PACKAGES_DIR%\*.nupkg"
+  displayName: Push Nuget Packages to $(GITHUB_PACKAGES)
+  condition: and(succeeded(), ne(variables['package_count'],0))
+  env:
+    PACKAGES_DIR: $(Build.ArtifactStagingDirectory)
+    NUGET_CONFIG: $(Build.ArtifactStagingDirectory)\nuget.publish.config
+
+- task: NuGetCommand@2
+  displayName: Push Nuget Packages to nuget.org
+  condition: and(succeeded(), ne(variables['package_count'],0))
+  inputs:
+    command: 'push'
+    feedsToUse: 'config'
+    includeNugetOrg: 'true'
+    publishFeedCredentials: 'NuGet.org'
+    externalFeedCredentials: 'NuGet.org'
+    packagesToPush: $(Build.ArtifactStagingDirectory)\*.nupkg
+    verbosityPush: 'Detailed'
+    nuGetFeedType: 'external'
+    allowPackageConflicts: true
+
+- powershell: |
+    Write-Host "Tagging Build: $env:BuildNumber"
+    $tag = "v" + $env:BuildNumber
+    git tag $tag
+    git push origin $tag
+  displayName: Tag build
+  env:
+    BuildNumber: $(Build.BuildNumber)
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+
+- task: GithubRelease@1 
+  displayName: 'Create GitHub Release'
+  inputs:
+    gitHubConnection: github-czemacleod
+    repositoryName: CZEMacLeod/C3D.Extensions.Aspire.IISExpress
+    assets: $(Build.ArtifactStagingDirectory)/*.nupkg
+    addChangeLog: true

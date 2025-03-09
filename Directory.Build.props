@@ -1,0 +1,15 @@
+<Project>
+  <PropertyGroup>
+    <IsTestProject>false</IsTestProject>
+    <SolutionDir Condition="'$(SolutionDir)'==''">$(MSBuildThisFileDirectory)</SolutionDir>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <RestoreAdditionalProjectSources Condition="EXISTS('$(SolutionDir)\nuget')">$(SolutionDir)\nuget</RestoreAdditionalProjectSources>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Build.CopyOnWrite" Version="1.0.322" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
+  </ItemGroup>
+</Project>  

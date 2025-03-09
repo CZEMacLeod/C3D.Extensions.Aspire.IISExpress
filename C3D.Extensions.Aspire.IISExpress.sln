@@ -7,11 +7,22 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{E1FFCD98
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 		.vs\C3D.Extensions.Aspire.IISExpress\config\applicationhost.config = .vs\C3D.Extensions.Aspire.IISExpress\config\applicationhost.config
+		build\azure-pipelines.yml = build\azure-pipelines.yml
+		Directory.Build.props = Directory.Build.props
+		Directory.Build.targets = Directory.Build.targets
+		build\ImportCert.ps1 = build\ImportCert.ps1
 		LICENSE.txt = LICENSE.txt
+		build\nuget.publish.config = build\nuget.publish.config
 		README.md = README.md
+		build\RemoveCert.ps1 = build\RemoveCert.ps1
+		build\Test.snk = build\Test.snk
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{B02941E8-EB9F-4AFF-8383-6B231DD01754}"
+	ProjectSection(SolutionItems) = preProject
+		src\Directory.Build.props = src\Directory.Build.props
+		src\Directory.Build.Targets = src\Directory.Build.Targets
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{A0E19FE4-77FC-4D32-B29C-D31909D2DBC2}"
 EndProject
