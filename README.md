@@ -8,6 +8,10 @@ A set of packages to make it easier to work with IIS Express / System.Web projec
 ## [C3D.Extensions.Aspire.Node](src/C3D/Extensions/Aspire/Node/README.md)
 ## [C3D.Extensions.Aspire.VisualStudioDebug](src/C3D/Extensions/Aspire/VisualStudioDebug/README.md)
 
+> [!WARNING]  
+> I am not a node developer and the support is currently pretty basic. 
+> This is mainly to test and demonstrate using the `VisualStudioDebug` packages to connect with alternate transports and debug engines.
+
 # Support Packages
 
 ## [C3D.Extensions.VisualStudioDebug](src/C3D/Extensions/VisualStudioDebug/README.md)
@@ -40,3 +44,16 @@ This consists of a Full Framework example app using MVC, with some of the code f
 The Core app is lightweight and only contains YARP, a Session variable route (per the RemoteSession example), OTLP telemetry, and HeathChecks.
 Apire sets up a randomized app key used by both applications, and wires up the Urls for YARP etc.
 Traces show the request span of the core app, the proxy request, and the framework processing.
+
+## Node
+This shows using Aspire to develop a simple Node / Express based application with full debugging support while using Aspire.
+Simply set a breakpoint in `app.js` such as on line 62 - the delegate body.
+```js
+app.get('/', function (req, res) {
+    res.send('Hello World!');
+});
+```
+Set the Startup Project to `AspireAppHostNodeJS` and start the project.
+
+> [!WARNING]  
+> I am not a node developer and the example application is hacked together from examples from the [opentelemetry](https://github.com/open-telemetry/opentelemetry-js) and [aspire-samples](https://github.com/dotnet/aspire-samples) repositories.
