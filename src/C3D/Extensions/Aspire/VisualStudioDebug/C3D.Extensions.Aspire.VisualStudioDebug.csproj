@@ -12,4 +12,8 @@
   <ItemGroup>
     <ProjectReference Include="..\..\VisualStudioDebug\C3D.Extensions.VisualStudioDebug.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <PackageTag Include="VisualStudio" />
+    <PackageTag Include="Debugger" />
+  </ItemGroup>
 </Project>

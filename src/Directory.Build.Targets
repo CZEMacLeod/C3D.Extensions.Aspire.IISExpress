@@ -26,6 +26,7 @@
           Pack="true"
           PackagePath="$(PackageLicenseFile)"
           Visible="false" />
+    <None Include="version.json" />
   </ItemGroup>
 
   <ItemGroup>

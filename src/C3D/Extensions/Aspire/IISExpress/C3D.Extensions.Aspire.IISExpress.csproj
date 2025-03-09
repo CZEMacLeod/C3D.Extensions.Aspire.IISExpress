@@ -13,4 +13,7 @@
     <None Update="build\**\*.*" Pack="true" PackagePath="$(TargetFramework)\%(Filename)%(Extension)" Visible="true" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageTag Include="IISExpress" />
+  </ItemGroup>
 </Project>

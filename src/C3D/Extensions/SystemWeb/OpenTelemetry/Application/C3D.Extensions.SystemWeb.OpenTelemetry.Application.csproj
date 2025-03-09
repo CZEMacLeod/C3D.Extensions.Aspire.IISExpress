@@ -22,4 +22,8 @@
     <Reference Include="System.Web" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageTag Include="SystemWeb" />
+    <PackageTag Include="OpenTelemetery" />
+  </ItemGroup>
 </Project>
