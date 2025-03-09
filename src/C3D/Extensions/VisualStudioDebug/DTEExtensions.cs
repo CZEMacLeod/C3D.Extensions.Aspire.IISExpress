@@ -1,5 +1,6 @@
 ﻿using EnvDTE;
 using EnvDTE80;
+using System.Diagnostics;
 
 namespace C3D.Extensions.VisualStudioDebug;
 
@@ -39,14 +40,24 @@ internal static class DTEExtensions
     {
         foreach (var engine in engines)
         {
-            if (Guid.TryParse(engine, out var id))
+            Engine resolvedEngine=null!;
+            if (Guid.TryParse(engine, out var _))
             {
-                yield return transport.Engines.OfType<Engine>().First(e => e.ID == engine);
+                foreach (Engine e in transport.Engines)
+                {
+                    if (e.ID == engine)
+                    {
+                        resolvedEngine=e;
+                        break;
+                    }
+                }
             }
             else
             {
-                yield return transport.Engines.Item(engine);
+                resolvedEngine = transport.Engines.Item(engine);
             }
+            if (resolvedEngine is null) throw new ArgumentOutOfRangeException(nameof(engines));
+            yield return resolvedEngine;
         }
     }
 }

@@ -140,7 +140,16 @@ public class VisualStudioInstance : IDisposable
         // Attach to the process.
         if (process != null)
         {
-            process.Attach2(transport.ResolveDebugEngines(engines).ToArray());
+            Engine[] resolvedEngines;
+            try
+            {
+                resolvedEngines = transport.ResolveDebugEngines(engines).ToArray();
+            } catch (Exception e)
+            {
+                logger.LogError("Failed to resolve engines {engines}", engines);
+                throw new ArgumentException("Failed to resolve engines", nameof(engines), e);
+            }
+            process.Attach2(resolvedEngines);
         }
         else
         {
