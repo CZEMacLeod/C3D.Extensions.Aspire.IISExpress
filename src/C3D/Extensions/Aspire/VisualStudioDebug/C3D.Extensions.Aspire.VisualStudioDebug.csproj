@@ -8,6 +8,9 @@
 
   <ItemGroup>
     <PackageReference Include="Aspire.Hosting" Version="9.1.0" />
-    <PackageReference Include="envdte" Version="17.13.40008" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\VisualStudioDebug\C3D.Extensions.VisualStudioDebug.csproj" />
   </ItemGroup>
 </Project>

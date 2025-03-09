@@ -8,6 +8,8 @@ public class DebugAttachAnnotation : IResourceAnnotation, IDisposable
 
     public int? DebuggerProcessId { get; set; }
 
+    public bool Skip { get; set; }
+
     private readonly SemaphoreSlim @lock = new(1,1);
     public bool TryLock(out IDisposable? token)
     {

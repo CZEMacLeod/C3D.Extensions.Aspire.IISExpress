@@ -2,6 +2,7 @@
 using Aspire.Hosting.ApplicationModel;
 using Aspire.Hosting.Eventing;
 using C3D.Extensions.Aspire.VisualStudioDebug.Annotations;
+using C3D.Extensions.VisualStudioDebug;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -15,6 +16,7 @@ internal class AttachDebuggerHook : BackgroundService
     private readonly ResourceNotificationService resourceNotificationService;
     private readonly IDistributedApplicationEventing distributedApplicationEventing;
     private readonly IOptions<DebuggerHookOptions> options;
+    private readonly VisualStudioInstances visualStudioInstances;
     private readonly IServiceProvider serviceProvider;
 
     public AttachDebuggerHook(
@@ -22,6 +24,7 @@ internal class AttachDebuggerHook : BackgroundService
         ResourceNotificationService resourceNotificationService,
         IDistributedApplicationEventing distributedApplicationEventing,
         IOptions<DebuggerHookOptions> options,
+        VisualStudioInstances visualStudioInstances,
         IServiceProvider serviceProvider
         )
     {
@@ -29,11 +32,14 @@ internal class AttachDebuggerHook : BackgroundService
         this.resourceNotificationService = resourceNotificationService;
         this.distributedApplicationEventing = distributedApplicationEventing;
         this.options = options;
+        this.visualStudioInstances = visualStudioInstances;
         this.serviceProvider = serviceProvider;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
+        logger.LogInformation("Waiting for processes to debug");
+
         await foreach (var notification in resourceNotificationService
             .WatchAsync(stoppingToken)
             .WithCancellation(stoppingToken))
@@ -71,6 +77,12 @@ internal class AttachDebuggerHook : BackgroundService
             resource.Annotations.Add(annotation);
         }
 
+        if (annotation.Skip)
+        {
+            logger.LogDebug("Skipping {name}", resource.Name);
+            return;
+        }
+
         IDisposable? token = null;
         try
         {
@@ -105,7 +117,7 @@ internal class AttachDebuggerHook : BackgroundService
         if (!context.Resource.HasAnnotationOfType<DebugAttachTransportAnnotation>())
         {
             target = System.Diagnostics.Process.GetProcessById(context.ProcessId);
-            var vs1 = VisualStudioAttacher.GetAttachedVisualStudio(target);
+            var vs1 = visualStudioInstances.GetAttachedVisualStudio(target);
             if (vs1 is not null)
             {
                 logger.LogWarning("Debugger {vs}:{vsId} already attached to {target}:{targetId}", vs1.ProcessName, vs1.Id, target.ProcessName, target.Id);
@@ -116,7 +128,7 @@ internal class AttachDebuggerHook : BackgroundService
         }
 
         var aspireHost = Process.GetCurrentProcess();
-        var vs = VisualStudioAttacher.GetAttachedVisualStudio(aspireHost);
+        var vs = visualStudioInstances.GetAttachedVisualStudio(aspireHost);
         if (vs is null)
         {
             logger.LogError("Could not get debugger for aspire host {host}", aspireHost);
@@ -139,8 +151,9 @@ internal class AttachDebuggerHook : BackgroundService
         {
             ShowEngines(vs, ta.Transport);
             ShowProcesses(vs, ta.Transport, ta.Qualifier);
-            logger.LogInformation("Attaching {vs}:{vsId} to {transport} {id} for {applicationName}", vs.ProcessName, vs.Id, ta.Transport, ta.Qualifier, context.Resource.Name);
-            VisualStudioAttacher.AttachVisualStudioToProcess(vs, ta.Transport, ta.Qualifier, engines);
+            logger.LogInformation("Attaching {vs}:{vsId} to {transport} {id} for {applicationName}", 
+                vs.ProcessName, vs.Id, vs.GetDebugTransportName(ta.Transport), ta.Qualifier, context.Resource.Name);
+            vs.AttachVisualStudioToProcess(ta.Transport, ta.Qualifier, engines);
         }
         else
         {
@@ -148,7 +161,7 @@ internal class AttachDebuggerHook : BackgroundService
             ShowTransports(vs);
             ShowEngines(vs, "default");
             ShowProcesses(vs, "default", null);
-            VisualStudioAttacher.AttachVisualStudioToProcess(vs, context.ProcessId, engines);
+            vs.AttachVisualStudioToProcess(context.ProcessId, engines);
         }
 
         logger.LogInformation("Debugger {vs}:{vsId} attached to target", vs.ProcessName, vs.Id);
@@ -157,11 +170,11 @@ internal class AttachDebuggerHook : BackgroundService
         await distributedApplicationEventing.PublishAsync(new Events.AfterDebugEvent(context), cancellationToken);
     }
 
-    private void ShowProcesses(Process vs, string transport, string? qualifier)
+    private void ShowProcesses(VisualStudioInstance vs, string transport, string? qualifier)
     {
         if (options.Value.ShowProcesses)
         {
-            var availableProcesses = VisualStudioAttacher.GetDebugProcesses(vs, transport, qualifier);
+            var availableProcesses = vs.GetDebugProcesses(transport, qualifier);
             foreach (var process in availableProcesses)
             {
                 logger.LogInformation("Available {transport} process {id} {name} {isDebugged}", transport, process.id, process.name, process.isDebugged);
@@ -169,11 +182,11 @@ internal class AttachDebuggerHook : BackgroundService
         }
     }
 
-    private void ShowTransports(Process vs)
+    private void ShowTransports(VisualStudioInstance vs)
     {
         if (options.Value.ShowTransports)
         {
-            var availableTransports = VisualStudioAttacher.GetDebugTransports(vs);
+            var availableTransports = vs.GetDebugTransports();
             foreach (var transport in availableTransports)
             {
                 logger.LogInformation("Available transport {id} {name}",  transport.id, transport.name);
@@ -181,11 +194,11 @@ internal class AttachDebuggerHook : BackgroundService
         }
     }
 
-    private void ShowEngines(Process vs, string transport)
+    private void ShowEngines(VisualStudioInstance vs, string transport)
     {
         if (options.Value.ShowEngines)
         {
-            var availableEngines = VisualStudioAttacher.GetDebugEngines(vs, transport);
+            var availableEngines = vs.GetDebugEngines(transport);
             foreach (var engine in availableEngines)
             {
                 logger.LogInformation("Available {transport} engine {id} {name} {result}", transport, engine.id, engine.name, engine.result);

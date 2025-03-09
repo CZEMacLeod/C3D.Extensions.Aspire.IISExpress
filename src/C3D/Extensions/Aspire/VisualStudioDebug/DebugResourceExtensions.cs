@@ -1,7 +1,9 @@
 ﻿using Aspire.Hosting.ApplicationModel;
 using C3D.Extensions.Aspire.VisualStudioDebug;
 using C3D.Extensions.Aspire.VisualStudioDebug.Annotations;
+using C3D.Extensions.VisualStudioDebug;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Aspire.Hosting;
 
@@ -13,18 +15,32 @@ public interface IDebugBuilder<TResource> : IResourceBuilder<TResource>
 
 public static class DebugResourceExtensions
 {
-    public static IServiceCollection AddAttachDebuggerHook(this IServiceCollection services) =>
+    public static IServiceCollection AddAttachDebuggerHook(this IServiceCollection services)
+    {
         services
             .AddHostedService<AttachDebuggerHook>()
             .AddOptions<DebuggerHookOptions>()
-            .BindConfiguration("DebuggerHook")
-            .Services;
+            .BindConfiguration("DebuggerHook");
+        services.TryAddSingleton<VisualStudioInstances>();
+        return services;
+    }
 
     public static IDebugBuilder<TResource> WithDebugEngine<TResource>(this IDebugBuilder<TResource> debugBuilder,
         string engine)
         where TResource : IResource
     {
         debugBuilder.ResourceBuilder.WithAnnotation<DebugAttachEngineAnnotation>(new() { Engine = engine });
+        return debugBuilder;
+    }
+
+    public static IDebugBuilder<TResource> WithDebugSkip<TResource>(this IDebugBuilder<TResource> debugBuilder,
+        bool skip = true)
+        where TResource : IResource
+    {
+        if (debugBuilder.ResourceBuilder.Resource.TryGetLastAnnotation<DebugAttachAnnotation>(out var annotation))
+        {
+            annotation.Skip = skip;
+        }
         return debugBuilder;
     }
 
