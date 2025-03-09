@@ -2,14 +2,23 @@
 
 ## C3D.Extensions.Aspire.IISExpress
 
-A way to reference and execute an IIS Express based project (ASP.NET 4.x) using Aspire
+A way to reference and execute an IIS Express based project (ASP.NET 4.x) using Aspire.
+Connects to the instance of VisualStudio running the AprireHost and attaches the debugger to the IIS Express instance so that the project can be debugged as normal.
+Adds a healthcheck to the IIS Express resource to show whether the debugger has been attached.
+A future option would be to send the initial request to spin up the site once the debugger is attached.
 
 ## C3D.Extensions.Aspire.VisualStudioDebug
 
 A way to get VisualStudio to attach the debugger for the AspireHost to a running executable project (such as an `IISExpressProjectResource`).
-Uses a BackgroundService to montior for the Process Id (via `executable.pid`) and COM to grab the running object of the VisualStudio `DTE`.
+Uses a BackgroundService to montior for the Process Id (via `executable.pid`) and `C3D.Extensions.VisualStudioDebug` to manipulate VisualStudio.
 Appropriate debug engines can be enabled, such as `Managed (.NET Framework 4.x)` to allow debugging of IIS Express based ASP.Net 4.x Projects.
-In theory this could be extended to attach the debugger to apps in docker containers, or other languages such as nodejs.
+This mechanism could be extended to attach the debugger to apps in docker containers, or other languages such as nodejs.
+
+### C3D.Extensions.VisualStudioDebug
+
+Encapsulates accessing Visual Studio using the IRunningObjectTable COM mechanism and makes it easy to connect and use the debug interface from the DTE.
+Provides constants for WellKnown Engines and Transports.
+Based in part on on code from [this gist](https://gist.github.com/3813175).
 
 # Client Packages
 
@@ -53,7 +62,6 @@ The Core app is lightweight and only contains YARP, a Session variable route (pe
 Apire sets up a randomized app key used by both applications, and wires up the Urls for YARP etc.
 Traces show the request span of the core app, the proxy request, and the framework processing.
 
-
 # Debugging
 Because Aspire doesn't natively know how to attach the debugger to IIS Express, when adding an IISExpressProject,
 the `VisualStudioDebug` mechanism will be enabled by default with `DebugMode.VisualStudio`.
@@ -73,5 +81,10 @@ This is checked for by a `PreApplicationStartMethod` which will attempt to launc
 
 ## Known Issues
 - The `$(SolutionDir)\.vs\$(SolutionName)\config\applicationhost.config` file is not checked in as part of the source so you will probably have to manually select each web application and run it once manually to setup the appropriate information.
-- There is no easy way to automatically start up the IIS Express based website (it might be possible to do via a healthcheck poll or similar but that is out of scope at this time.)
+- There is no 'easy' way to automatically start up the IIS Express based website (it might be possible to do via a healthcheck poll or similar but that is out of scope at this time.)
+
+## Extension Points
+The `C3D.Extensions.Aspire.VisualStudioDebug` package has eventing enabled that fires
+`BeforeDebugEvent` and `AfterDebugEvent`. This could be listened for, and used to make an http call to any IIS Express based application to start them up after the debugger has attached.
+
 
