@@ -13,7 +13,8 @@ public static class IISExpressEntensions
     public static IResourceBuilder<IISExpressProjectResource> WithDebugger(this IResourceBuilder<IISExpressProjectResource> resourceBuilder,
         DebugMode debugMode = DebugMode.VisualStudio) =>
         DebugResourceExtensions.WithDebugger(resourceBuilder, debugMode)
-            .WithDebugEngine(C3D.Extensions.VisualStudioDebug.WellKnown.Engines.Net4);
+            .WithDebugEngine(C3D.Extensions.VisualStudioDebug.WellKnown.Engines.Net4)
+            .WithDebuggerHealthcheck();
 
     public static IDistributedApplicationBuilder AddIISExpressConfiguration(this IDistributedApplicationBuilder builder,
         Action<IISExpressOptions>? options = null)

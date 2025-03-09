@@ -1,9 +1,12 @@
 ﻿using Aspire.Hosting.ApplicationModel;
 using C3D.Extensions.Aspire.VisualStudioDebug;
 using C3D.Extensions.Aspire.VisualStudioDebug.Annotations;
+using C3D.Extensions.Aspire.VisualStudioDebug.HealthChecks;
 using C3D.Extensions.VisualStudioDebug;
+using Grpc.Core;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using System.IO;
 
 namespace Aspire.Hosting;
 
@@ -63,6 +66,24 @@ public static class DebugResourceExtensions
         where TResource : IResource
     {
         debugBuilder.ResourceBuilder.WithAnnotation<DebugAttachTransportAnnotation>(new() { Transport = transport, Qualifier = qualifier });
+        return debugBuilder;
+    }
+
+    public static IDebugBuilder<TResource> WithDebuggerHealthcheck<TResource>(this IDebugBuilder<TResource> debugBuilder)
+        where TResource : IResource
+    {
+        var healthCheckKey = $"{debugBuilder.ResourceBuilder.Resource.Name}_debugger_check";
+        if (debugBuilder.ResourceBuilder.Resource.TryGetAnnotationsOfType<HealthCheckAnnotation>(out var annotations)
+            && annotations.Any(a=>a.Key==healthCheckKey))
+        {
+            return debugBuilder;
+        }
+
+        debugBuilder.ResourceBuilder.ApplicationBuilder.Services.AddHealthChecks()
+            .AddTypeActivatedCheck<DebugHealthCheck>(healthCheckKey, debugBuilder.ResourceBuilder.Resource.Name);
+
+        debugBuilder.ResourceBuilder.WithHealthCheck(healthCheckKey);
+        
         return debugBuilder;
     }
 
