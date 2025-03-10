@@ -12,4 +12,16 @@
     <PackageReference Include="Microsoft.Build.CopyOnWrite" Version="1.0.334" PrivateAssets="All" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
   </ItemGroup>
-</Project>  
+
+  <Target Name="GetTargetFrameworksWithPlatformForSingleTargetFramework" /> <!-- Ensure target exists for non net projects -->
+  <Target Name="SupressApire004" BeforeTargets="GetTargetFrameworksWithPlatformForSingleTargetFramework">
+    <!-- TODO: Add UsingMSBuildSDKSystemWeb property to https://github.com/CZEMacLeod/MSBuild.SDK.SystemWeb -->
+    <PropertyGroup>
+      <UsingMSBuildSDKSystemWeb Condition="'$(UsingMSBuildSDKSystemWeb)'==''">false</UsingMSBuildSDKSystemWeb>
+      <UsingMSBuildSDKSystemWeb Condition="'%(ProjectCapability.Identity)'=='SupportsSystemWeb'">true</UsingMSBuildSDKSystemWeb>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(UsingMSBuildSDKSystemWeb)' == 'true'">
+      <_IsExecutable>true</_IsExecutable>
+    </PropertyGroup>
+  </Target>
+</Project>
