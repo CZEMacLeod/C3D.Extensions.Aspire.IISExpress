@@ -1,9 +1,7 @@
 using Microsoft.AspNetCore.SystemWebAdapters;
+using OpenTelemetry;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
-using OpenTelemetry;
-using Microsoft.Extensions.Options;
-using Microsoft.AspNetCore.Builder;
 
 namespace SWACore;
 
@@ -66,9 +64,7 @@ public class Program
             {
                 options.RegisterKey<int>("CoreCount");
             })
-            .AddRemoteAppClient(options =>
-            {
-            })
+            .AddRemoteAppClient(_ =>{ })
             .AddSessionClient();
 
         var app = builder.Build();
@@ -103,9 +99,7 @@ public class Program
             return session.Cast<string>().Select(key => new { Key = key, Value = session[key] });
         }).RequireSystemWebAdapterSession();
 
-        var remoteApp = app.Services.GetRequiredService<IOptions<RemoteAppClientOptions>>();
-
-        app.MapForwarder("/{**catch-all}", remoteApp.Value.RemoteAppUrl.AbsoluteUri).WithOrder(int.MaxValue);
+        app.MapRemoteApp();
 
         app.Run();
     }

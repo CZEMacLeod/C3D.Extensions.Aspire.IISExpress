@@ -1,13 +1,16 @@
 ﻿using System.Linq;
 using System.Text.Json;
 using System.Web;
+using System.Web.Routing;
 using System.Web.SessionState;
 
 namespace SWAFramework.Handlers;
 
-public class SessionInfo : IHttpHandler, IRequiresSessionState
+public class SessionInfo : IHttpHandler, IRequiresSessionState, IRouteHandler
 {
     public bool IsReusable => true;
+
+    public IHttpHandler GetHttpHandler(RequestContext requestContext) => this;
 
     public void ProcessRequest(HttpContext context)
     {

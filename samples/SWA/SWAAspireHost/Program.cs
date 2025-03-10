@@ -7,15 +7,12 @@ var builder = DistributedApplication.CreateBuilder(new DistributedApplicationOpt
     AllowUnsecuredTransport = true
 });
 
-var key = Guid.NewGuid().ToString();
-
 var framework = builder.AddIISExpressProject<Projects.SWAFramework>("framework", IISExpressBitness.IISExpress64Bit)
-    .WithEnvironment("RemoteApp__ApiKey", key);
+    .WithSystemWebAdapters()
+    .WithHttpHealthCheck("/debug", 204);
 
 builder.AddProject<Projects.SWACore>("core")
-    .WithEnvironment("RemoteApp__ApiKey", key)
-    .WithEnvironment("RemoteApp__RemoteAppUrl", framework.GetEndpoint("http"))
-    .WithHttpsHealthCheck("/alive")
-    .WithRelationship(framework.Resource, "YARP");
+    .WithSystemWebAdapters(framework)
+    .WithHttpsHealthCheck("/alive");
 
 builder.Build().Run();

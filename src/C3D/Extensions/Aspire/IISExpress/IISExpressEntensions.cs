@@ -94,4 +94,50 @@ public static class IISExpressEntensions
         return resourceBuilder;
     }
 
+
+
+    public static IResourceBuilder<IISExpressProjectResource> WithSystemWebAdapters(this IResourceBuilder<IISExpressProjectResource> resourceBuilder,
+        string envNameBase = "RemoteApp",
+        string envNameApiKey = "__ApiKey",
+        string envNameUrl = "__RemoteAppUrl",
+        Guid? key = null) =>
+        resourceBuilder
+            .WithAnnotation(new SystemWebAdaptersAnnotation(key ?? Guid.NewGuid(),
+                envNameBase + envNameApiKey,
+                envNameBase + envNameUrl))
+            .WithEnvironment(c=>
+            {
+                if (resourceBuilder.Resource.TryGetLastAnnotation<SystemWebAdaptersAnnotation>(out var swa))
+                {
+                    c.EnvironmentVariables[swa.EnvNameUrl] = swa.Key.ToString();
+                }
+            });
+
+    public static IResourceBuilder<ProjectResource> WithSystemWebAdapters(
+        this IResourceBuilder<ProjectResource> resourceBuilder,
+        IResourceBuilder<IISExpressProjectResource> iisExpressResource,
+        string? envNameKey = null,
+        string? envNameUrl = null,
+        string endpoint = "http") => resourceBuilder.WithSystemWebAdapters(
+            iisExpressResource.Resource,
+            envNameKey,
+            envNameUrl,
+            endpoint);
+
+    public static IResourceBuilder<ProjectResource> WithSystemWebAdapters(
+        this IResourceBuilder<ProjectResource> resourceBuilder,
+        IISExpressProjectResource iisExpressResource,
+        string? envNameKey = null,
+        string? envNameUrl = null,
+        string endpoint = "http") =>
+        resourceBuilder
+            .WithRelationship(iisExpressResource, "YARP")
+            .WithEnvironment(c =>
+            {
+                if (iisExpressResource.TryGetLastAnnotation<SystemWebAdaptersAnnotation>(out var swa))
+                {
+                    c.EnvironmentVariables[envNameKey ?? swa.EnvNameKey] = swa.Key.ToString();
+                    c.EnvironmentVariables[envNameUrl ?? swa.EnvNameUrl] = iisExpressResource.GetEndpoint(endpoint);
+                }
+            });
 }
