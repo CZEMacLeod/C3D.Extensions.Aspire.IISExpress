@@ -3,10 +3,8 @@ using C3D.Extensions.Aspire.VisualStudioDebug;
 using C3D.Extensions.Aspire.VisualStudioDebug.Annotations;
 using C3D.Extensions.Aspire.VisualStudioDebug.HealthChecks;
 using C3D.Extensions.VisualStudioDebug;
-using Grpc.Core;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using System.IO;
 
 namespace Aspire.Hosting;
 
@@ -20,11 +18,14 @@ public static class DebugResourceExtensions
 {
     public static IServiceCollection AddAttachDebuggerHook(this IServiceCollection services)
     {
-        services
-            .AddHostedService<AttachDebuggerHook>()
-            .AddOptions<DebuggerHookOptions>()
-            .BindConfiguration("DebuggerHook");
-        services.TryAddSingleton<VisualStudioInstances>();
+        if (OperatingSystem.IsWindows())
+        {
+            services
+                .AddHostedService<AttachDebuggerHook>()
+                .AddOptions<DebuggerHookOptions>()
+                .BindConfiguration("DebuggerHook");
+            services.TryAddSingleton<VisualStudioInstances>();
+        }
         return services;
     }
 
@@ -32,6 +33,10 @@ public static class DebugResourceExtensions
         string engine)
         where TResource : IResource
     {
+        if (!debugBuilder.ResourceBuilder.ApplicationBuilder.ExecutionContext.IsRunMode)
+        {
+            return debugBuilder;
+        }
         debugBuilder.ResourceBuilder.WithAnnotation<DebugAttachEngineAnnotation>(new() { Engine = engine });
         return debugBuilder;
     }
@@ -40,6 +45,10 @@ public static class DebugResourceExtensions
         bool skip = true)
         where TResource : IResource
     {
+        if (!debugBuilder.ResourceBuilder.ApplicationBuilder.ExecutionContext.IsRunMode)
+        {
+            return debugBuilder;
+        }
         if (debugBuilder.ResourceBuilder.Resource.TryGetLastAnnotation<DebugAttachAnnotation>(out var annotation))
         {
             annotation.Skip = skip;
@@ -51,6 +60,10 @@ public static class DebugResourceExtensions
         params string[] engines)
     where TResource : IResource
     {
+        if (!debugBuilder.ResourceBuilder.ApplicationBuilder.ExecutionContext.IsRunMode)
+        {
+            return debugBuilder;
+        }
         if (engines is not null)
         {
             foreach (var engine in engines)
@@ -65,6 +78,10 @@ public static class DebugResourceExtensions
         string transport, string? qualifier = null)
         where TResource : IResource
     {
+        if (!debugBuilder.ResourceBuilder.ApplicationBuilder.ExecutionContext.IsRunMode)
+        {
+            return debugBuilder;
+        }
         debugBuilder.ResourceBuilder.WithAnnotation<DebugAttachTransportAnnotation>(new() { Transport = transport, Qualifier = qualifier });
         return debugBuilder;
     }
@@ -72,9 +89,14 @@ public static class DebugResourceExtensions
     public static IDebugBuilder<TResource> WithDebuggerHealthcheck<TResource>(this IDebugBuilder<TResource> debugBuilder)
         where TResource : IResource
     {
+        if (!debugBuilder.ResourceBuilder.ApplicationBuilder.ExecutionContext.IsRunMode)
+        {
+            return debugBuilder;
+        }
+
         var healthCheckKey = $"{debugBuilder.ResourceBuilder.Resource.Name}_debugger_check";
         if (debugBuilder.ResourceBuilder.Resource.TryGetAnnotationsOfType<HealthCheckAnnotation>(out var annotations)
-            && annotations.Any(a=>a.Key==healthCheckKey))
+            && annotations.Any(a => a.Key == healthCheckKey))
         {
             return debugBuilder;
         }
@@ -83,7 +105,7 @@ public static class DebugResourceExtensions
             .AddTypeActivatedCheck<DebugHealthCheck>(healthCheckKey, debugBuilder.ResourceBuilder.Resource.Name);
 
         debugBuilder.ResourceBuilder.WithHealthCheck(healthCheckKey);
-        
+
         return debugBuilder;
     }
 
@@ -92,6 +114,14 @@ public static class DebugResourceExtensions
         DebugMode debugMode = DebugMode.VisualStudio)
         where TResource : ExecutableResource
     {
+        if (!resourceBuilder.ApplicationBuilder.ExecutionContext.IsRunMode)
+        {
+            return new DebugBuilder<TResource>(resourceBuilder);
+        }
+        if (debugMode == DebugMode.VisualStudio && !OperatingSystem.IsWindows())
+        {
+            throw new ArgumentOutOfRangeException(nameof(debugMode), "Visual Studio debugging is only supported on Windows");
+        }
         resourceBuilder.ApplicationBuilder.Services.AddAttachDebuggerHook();
         return new DebugBuilder<TResource>(
             resourceBuilder
@@ -112,7 +142,7 @@ public static class DebugResourceExtensions
     {
         private readonly IResourceBuilder<TResource> resourceBuilder;
 
-        public DebugBuilder(IResourceBuilder<TResource> resourceBuilder) => 
+        public DebugBuilder(IResourceBuilder<TResource> resourceBuilder) =>
             this.resourceBuilder = resourceBuilder;
 
         public IResourceBuilder<TResource> ResourceBuilder => resourceBuilder;
@@ -121,7 +151,7 @@ public static class DebugResourceExtensions
 
         public TResource Resource => resourceBuilder.Resource;
 
-        public IResourceBuilder<TResource> WithAnnotation<TAnnotation>(TAnnotation annotation, ResourceAnnotationMutationBehavior behavior = ResourceAnnotationMutationBehavior.Append) where TAnnotation : IResourceAnnotation => 
+        public IResourceBuilder<TResource> WithAnnotation<TAnnotation>(TAnnotation annotation, ResourceAnnotationMutationBehavior behavior = ResourceAnnotationMutationBehavior.Append) where TAnnotation : IResourceAnnotation =>
             resourceBuilder.WithAnnotation(annotation, behavior);
     }
 }
