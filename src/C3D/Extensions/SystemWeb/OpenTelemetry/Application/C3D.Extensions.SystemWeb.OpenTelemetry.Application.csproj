@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net48</TargetFramework>
     <LangVersion>10.0</LangVersion>
+    <AssemblyTitle>C3D Extensions System.Web OpenTelemetry HttpApplication</AssemblyTitle>
   </PropertyGroup>
 
   <ItemGroup Label="OpenTelemetry">
@@ -25,5 +26,6 @@
   <ItemGroup>
     <PackageTag Include="SystemWeb" />
     <PackageTag Include="OpenTelemetery" />
+    <PackageTag Include="HttpApplication" />
   </ItemGroup>
 </Project>

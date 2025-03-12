@@ -4,6 +4,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <AssemblyTitle>$(AssemblyTitle) IIS Express</AssemblyTitle>
   </PropertyGroup>
 
   <ItemGroup>
@@ -15,5 +16,6 @@
 
   <ItemGroup>
     <PackageTag Include="IISExpress" />
+    <PackageTag Include="SystemWeb" />
   </ItemGroup>
 </Project>

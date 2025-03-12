@@ -23,7 +23,7 @@ parameters:
   - name: git_commit_ids
     type: string
     displayName: Build Commit IDs
-    default: ''
+    default: ' '
   - name: project_to_build
     type: string
     displayName: Project To Build
