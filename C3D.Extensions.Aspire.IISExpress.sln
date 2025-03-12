@@ -26,6 +26,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{B02941E8-EB9
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{A0E19FE4-77FC-4D32-B29C-D31909D2DBC2}"
+	ProjectSection(SolutionItems) = preProject
+		samples\Directory.Build.props = samples\Directory.Build.props
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "C3D.Extensions.Aspire.IISExpress", "src\C3D\Extensions\Aspire\IISExpress\C3D.Extensions.Aspire.IISExpress.csproj", "{6156F6B9-89C5-445D-AD9C-F71C80C4A330}"
 EndProject
