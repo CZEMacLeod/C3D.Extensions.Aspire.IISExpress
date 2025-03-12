@@ -18,9 +18,14 @@
     <PackageReference Include="OpenTelemetry.Instrumentation.AspNet" Version="1.11.0-beta.2" />
     <PackageReference Include="OpenTelemetry.Instrumentation.AspNet.TelemetryHttpModule" Version="1.11.0-beta.2" />
   </ItemGroup>
-  
+
+  <PropertyGroup>
+    <Grpc_SkipNativeLibsCopy>true</Grpc_SkipNativeLibsCopy>
+    <!-- Don't copy the native libs into this pacakge -->
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System.Web" />
+    <Content Update="*.*" Pack="false" />
   </ItemGroup>
 
   <ItemGroup>
