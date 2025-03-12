@@ -257,19 +257,12 @@ steps:
     PACKAGES_DIR: $(Build.ArtifactStagingDirectory)
     NUGET_CONFIG: $(Build.ArtifactStagingDirectory)\nuget.publish.config
 
-- task: NuGetCommand@2
+- script: nuget push -Source NuGet -ConfigFile %NUGET_CONFIG% -SkipDuplicate "%PACKAGES_DIR%\*.nupkg"
   displayName: Push Nuget Packages to nuget.org
   condition: and(succeeded(), ne(variables['package_count'],0))
-  inputs:
-    command: 'push'
-    feedsToUse: 'config'
-    includeNugetOrg: 'true'
-    publishFeedCredentials: 'NuGet.org'
-    externalFeedCredentials: 'NuGet.org'
-    packagesToPush: $(Build.ArtifactStagingDirectory)\*.nupkg
-    verbosityPush: 'Detailed'
-    nuGetFeedType: 'external'
-    allowPackageConflicts: true
+  env:
+    PACKAGES_DIR: $(Build.ArtifactStagingDirectory)
+    NUGET_CONFIG: $(Build.ArtifactStagingDirectory)\nuget.publish.config
 
 - powershell: |
     Write-Host "Tagging Build: $env:BuildNumber"
