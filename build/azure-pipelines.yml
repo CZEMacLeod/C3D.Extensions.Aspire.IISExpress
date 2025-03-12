@@ -257,6 +257,19 @@ steps:
     PACKAGES_DIR: $(Build.ArtifactStagingDirectory)
     NUGET_CONFIG: $(Build.ArtifactStagingDirectory)\nuget.publish.config
 
+- script: nuget.exe sources Add -NonInteractive -Name NuGet -Source "https://api.nuget.org/v3/index.json" -ConfigFile %NUGET_CONFIG%
+  condition: and(succeeded(), ne(variables['package_count'],0))
+  displayName: Add nuget.org package source
+  env:
+    NUGET_CONFIG: $(Build.ArtifactStagingDirectory)\nuget.publish.config
+
+- script: nuget.exe setapikey %NUGET_API_KEY% -Source "https://api.nuget.org/v3/index.json" -ConfigFile %NUGET_CONFIG%
+  condition: and(succeeded(), ne(variables['package_count'],0))
+  displayName: Set nuget.org apikey
+  env:
+    NUGET_API_KEY: $(NUGET_API_KEY)
+    NUGET_CONFIG: $(Build.ArtifactStagingDirectory)\nuget.publish.config
+
 - script: nuget push -Source NuGet -ConfigFile %NUGET_CONFIG% -SkipDuplicate "%PACKAGES_DIR%\*.nupkg"
   displayName: Push Nuget Packages to nuget.org
   condition: and(succeeded(), ne(variables['package_count'],0))
