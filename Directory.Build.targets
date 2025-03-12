@@ -33,7 +33,7 @@
     </PropertyGroup>
   </Target>
 
-  <Target Name="SetPackageDescription" DependsOnTargets="GetBuildVersion">
+  <Target Name="SetPackageDescription" DependsOnTargets="$(GetPackageVersionDependsOn)">
     <PropertyGroup>
       <PackageDescription>
         Assembly Version: $(AssemblyVersion)
