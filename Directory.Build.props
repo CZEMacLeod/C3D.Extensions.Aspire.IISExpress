@@ -13,13 +13,11 @@
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
   </ItemGroup>
 
+  <!-- Suppress APIRE004 warning by setting _IsExecutable to true in MSBuild.SDK.SystemWeb based projects -->
+  <!-- TODO: Investigate if we can just set that to true and what effect that might have -->
   <Target Name="GetTargetFrameworksWithPlatformForSingleTargetFramework" /> <!-- Ensure target exists for non net projects -->
   <Target Name="SupressApire004" BeforeTargets="GetTargetFrameworksWithPlatformForSingleTargetFramework">
-    <!-- TODO: Add UsingMSBuildSDKSystemWeb property to https://github.com/CZEMacLeod/MSBuild.SDK.SystemWeb -->
-    <PropertyGroup>
-      <UsingMSBuildSDKSystemWeb Condition="'$(UsingMSBuildSDKSystemWeb)'==''">false</UsingMSBuildSDKSystemWeb>
-      <UsingMSBuildSDKSystemWeb Condition="'%(ProjectCapability.Identity)'=='SupportsSystemWeb'">true</UsingMSBuildSDKSystemWeb>
-    </PropertyGroup>
+    <!-- UsingMSBuildSDKSystemWeb requires MSBuild.SDK.SystemWeb >= 4.0.97 -->
     <PropertyGroup Condition="'$(UsingMSBuildSDKSystemWeb)' == 'true'">
       <_IsExecutable>true</_IsExecutable>
     </PropertyGroup>

@@ -5,5 +5,7 @@
     "allowPrerelease": false
   },
   "msbuild-sdks": {
+    "MSBuild.SDK.SystemWeb": "4.0.97",
+    "MSBuild.SDK.SystemWeb.RazorLibrary": "4.0.97"
   }
 }
