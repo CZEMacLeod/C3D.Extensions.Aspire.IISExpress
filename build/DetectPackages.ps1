@@ -13,7 +13,7 @@ ForEach ($id in $ids) {
 		Name = $name
 		Version = $version
 	}
-	if $env:BUILD_SOURCEBRANCHNAME -eq "refs/heads/main" {
+	if ($env:BUILD_SOURCEBRANCHNAME -eq "refs/heads/main") {
 		$tag = "$pkg.Name_v$pkg.Version"
 		Write-Host "Tagging Build: $tag"
 		$message = "Package $pkg.Name Version $pkg.Version"
@@ -21,7 +21,7 @@ ForEach ($id in $ids) {
 	}
 	$pkgs += $pkg
 }
-if $env:BUILD_SOURCEBRANCHNAME -eq "refs/heads/main" {
+if ($env:BUILD_SOURCEBRANCHNAME -eq "refs/heads/main") {
 	git push origin --tags
 }
 $pkgs | Format-Table -Property Name, Version
