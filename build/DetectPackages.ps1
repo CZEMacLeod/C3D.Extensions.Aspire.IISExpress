@@ -12,8 +12,10 @@ ForEach ($id in $ids) {
 		Name = $name
 		Version = $version
 	}
-	git tag $id
-	git push origin $tag
+	Write-Host "Tagging Build: $id"
+	$message = "Package $pkg.Name Version $pkg.Version"
+	git tag -a $id -m $message
+	git push origin $tag HEAD:origin/$env:BUILD_SOURCEBRANCHNAME)
 	$pkgs += $pkg
 }
 $pkgs | Format-Table -Property Name, Version
