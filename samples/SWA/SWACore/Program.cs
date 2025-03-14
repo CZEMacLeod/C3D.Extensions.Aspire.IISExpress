@@ -1,12 +1,19 @@
 using Microsoft.AspNetCore.SystemWebAdapters;
 using OpenTelemetry;
 using OpenTelemetry.Metrics;
+using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 
 namespace SWACore;
 
 public class Program
 {
+    private static readonly Dictionary<string, object> GitResourceAttributes = new() {
+        { "vcs.system",      "git" },
+        { "vcs.commit.id",   ThisAssembly.GitCommitId },
+        { "vcs.commit.date", ThisAssembly.GitCommitDate.ToString("O") }
+    };
+
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
@@ -18,7 +25,12 @@ public class Program
             logging.IncludeScopes = true;
         });
 
-        var otel = builder.Services.AddOpenTelemetry();
+        var otel = builder.Services.AddOpenTelemetry()
+            .ConfigureResource(resource =>
+            {
+                resource.AddProcessRuntimeDetector();
+                resource.AddAttributes(GitResourceAttributes);
+            });
 
         // Add Metrics for ASP.NET Core and our custom metrics and export via OTLP
         otel.WithMetrics(metrics =>
@@ -64,7 +76,7 @@ public class Program
             {
                 options.RegisterKey<int>("CoreCount");
             })
-            .AddRemoteAppClient(_ =>{ })
+            .AddRemoteAppClient(_ => { })
             .AddSessionClient();
 
         var app = builder.Build();
