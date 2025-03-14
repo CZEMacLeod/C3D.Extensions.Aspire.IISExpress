@@ -1,19 +1,30 @@
 # C3D.Extensions.Aspire
 
+[![Build Status](https://dev.azure.com/flexviews/OSS.Build/_apis/build/status%2FCZEMacLeod.C3D.Extensions.Aspire.IISExpress?branchName=main)](https://dev.azure.com/flexviews/OSS.Build/_build/latest?definitionId=87&branchName=main)
+
 A set of packages to make it easier to work with IIS Express / System.Web projects, and extend debugging in Aspire.
 
 # AppHost Packages
 
 ## [C3D.Extensions.Aspire.IISExpress](src/C3D/Extensions/Aspire/IISExpress/README.md)
+[![NuGet package](https://img.shields.io/nuget/v/C3D.Extensions.Aspire.IISExpress.svg)](https://nuget.org/packages/C3D.Extensions.Aspire.IISExpress)
+[![NuGet downloads](https://img.shields.io/nuget/dt/C3D.Extensions.Aspire.IISExpress.svg)](https://nuget.org/packages/C3D.Extensions.Aspire.IISExpress)
+
 ## [C3D.Extensions.Aspire.VisualStudioDebug](src/C3D/Extensions/Aspire/VisualStudioDebug/README.md)
+[![NuGet package](https://img.shields.io/nuget/v/C3D.Extensions.Aspire.VisualStudioDebug.svg)](https://nuget.org/packages/C3D.Extensions.Aspire.VisualStudioDebug)
+[![NuGet downloads](https://img.shields.io/nuget/dt/C3D.Extensions.Aspire.VisualStudioDebug.svg)](https://nuget.org/packages/C3D.Extensions.Aspire.VisualStudioDebug)
 
 # Support Packages
 
 ## [C3D.Extensions.VisualStudioDebug](src/C3D/Extensions/VisualStudioDebug/README.md)
+[![NuGet package](https://img.shields.io/nuget/v/C3D.Extensions.VisualStudioDebug.svg)](https://nuget.org/packages/C3D.Extensions.VisualStudioDebug)
+[![NuGet downloads](https://img.shields.io/nuget/dt/C3D.Extensions.VisualStudioDebug.svg)](https://nuget.org/packages/C3D.Extensions.VisualStudioDebug)
 
 # Client Packages
 
 ## [C3D.Extensions.SystemWeb.OpenTelemetry.Application](src/C3D/Extensions/SystemWeb/OpenTelemetry/Application/README.md)
+[![NuGet package](https://img.shields.io/nuget/v/C3D.Extensions.SystemWeb.OpenTelemetry.Application.svg)](https://nuget.org/packages/C3D.Extensions.SystemWeb.OpenTelemetry.Application)
+[![NuGet downloads](https://img.shields.io/nuget/dt/C3D.Extensions.SystemWeb.OpenTelemetry.Application.svg)](https://nuget.org/packages/C3D.Extensions.SystemWeb.OpenTelemetry.Application)
 
 # Samples
 
