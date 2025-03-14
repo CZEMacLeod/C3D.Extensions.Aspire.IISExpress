@@ -4,7 +4,7 @@ Write-Host "Package Directory: $dir"
 $packages = Get-ChildItem -Path $dir -Recurse
 $ids = $packages | Select-Object -ExpandProperty name
 $pkgs = @()
-$origin = "HEAD:origin/$env:BUILD_SOURCEBRANCHNAME"
+$origin = "HEAD:$env:BUILD_SOURCEBRANCHNAME"
 ForEach ($id in $ids) {
 	$names = $id.Split(".")
 	$name = $names[(0..($names.Length-5))] -join "."
@@ -15,10 +15,10 @@ ForEach ($id in $ids) {
 	}
 	Write-Host "Tagging Build: $id"
 	$message = "Package $pkg.Name Version $pkg.Version"
-	git tag -a $id -m $message
-	git push origin $tag $origin
+	git tag -$id
 	$pkgs += $pkg
 }
+git push origin --tags
 $pkgs | Format-Table -Property Name, Version
 Write-Host "Package Count: $($packages.Count)"
 Write-Host ("##vso[task.setvariable variable=package_count;]$($packages.Count)")
