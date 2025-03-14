@@ -13,15 +13,23 @@ ForEach ($id in $ids) {
 		Name = $name
 		Version = $version
 	}
-	Write-Host "Tagging Build: $id"
-	$message = "Package $pkg.Name Version $pkg.Version"
-	git tag -$id
+	if $env:BUILD_SOURCEBRANCHNAME -eq "refs/heads/main" {
+		$tag = "$pkg.Name_v$pkg.Version"
+		Write-Host "Tagging Build: $tag"
+		$message = "Package $pkg.Name Version $pkg.Version"
+		git tag $tag
+	}
 	$pkgs += $pkg
 }
-git push origin --tags
+if $env:BUILD_SOURCEBRANCHNAME -eq "refs/heads/main" {
+	git push origin --tags
+}
 $pkgs | Format-Table -Property Name, Version
 Write-Host "Package Count: $($packages.Count)"
 Write-Host ("##vso[task.setvariable variable=package_count;]$($packages.Count)")
+$pushPackages = ($env:BUILD_SOURCEBRANCHNAME -eq "refs/heads/main") -and ($packages.Count -gt 0)
+Write-Host ("##vso[task.setvariable variable=push_packages;]$($pushPackages)")
 $releaseNotes = $env:AGENT_TEMPDIRECTORY + "\ReleaseNotes.md"
-"## Packages" | Out-File $releaseNotes
+$header = "## Packages$([Environment]::NewLine)"
+$header | Out-File $releaseNotes
 $pkgs | ConvertTo-MarkdownTable | Add-Content $releaseNotes

@@ -198,7 +198,7 @@ steps:
 # Run the signing command
 - task: PowerShell@2
   displayName: Sign packages
-  condition: and(succeeded(), ne(variables['package_count'],0))
+  condition: and(succeeded(), eq(variables['push_packages'], 'True'))
   inputs:
     targetType: inline
     script: |
@@ -217,6 +217,7 @@ steps:
 
 - task: CopyFiles@2
   displayName: Create nuget publish config
+  condition: and(succeeded(), eq(variables['push_packages'], 'True'))
   inputs:
     sourceFolder: '$(Build.SourcesDirectory)\build'
     contents: 'nuget.publish.config'
@@ -224,6 +225,7 @@ steps:
 
 - task: PowerShell@2
   displayName: Build Nuget Source URL
+  condition: and(succeeded(), eq(variables['push_packages'], 'True'))
   inputs:
     targetType: 'inline'
     script: |
@@ -236,6 +238,7 @@ steps:
 
 - script: nuget.exe sources Add -NonInteractive -Name GitHub -Source "%NUGET_SOURCE%" -Username "%GITHUB_USERNAME%" -Password "%GITHUB_TOKEN%" -ConfigFile %NUGET_CONFIG%
   displayName: Add github package source
+  condition: and(succeeded(), eq(variables['push_packages'], 'True'))
   env:
     GITHUB_OWNER: $(GITHUB_OWNER)
     GITHUB_USERNAME: $(GITHUB_USERNAME)
@@ -245,27 +248,27 @@ steps:
 
 - script: nuget push -Source GitHub -ConfigFile %NUGET_CONFIG% -SkipDuplicate "%PACKAGES_DIR%\*.nupkg"
   displayName: Push Nuget Packages to $(GITHUB_PACKAGES)
-  condition: and(succeeded(), ne(variables['package_count'],0))
+  condition: and(succeeded(), eq(variables['push_packages'], 'True'))
   env:
     PACKAGES_DIR: $(Build.ArtifactStagingDirectory)
     NUGET_CONFIG: $(Build.ArtifactStagingDirectory)\nuget.publish.config
 
 - script: nuget.exe sources Add -NonInteractive -Name NuGet -Source "https://api.nuget.org/v3/index.json" -ConfigFile %NUGET_CONFIG%
-  condition: and(succeeded(), ne(variables['package_count'],0))
   displayName: Add nuget.org package source
+  condition: and(succeeded(), eq(variables['push_packages'], 'True'))
   env:
     NUGET_CONFIG: $(Build.ArtifactStagingDirectory)\nuget.publish.config
 
 - script: nuget.exe setapikey %NUGET_API_KEY% -Source "https://api.nuget.org/v3/index.json" -ConfigFile %NUGET_CONFIG%
-  condition: and(succeeded(), ne(variables['package_count'],0))
   displayName: Set nuget.org apikey
+  condition: and(succeeded(), eq(variables['push_packages'], 'True'))
   env:
     NUGET_API_KEY: $(NUGET_API_KEY)
     NUGET_CONFIG: $(Build.ArtifactStagingDirectory)\nuget.publish.config
 
 - script: nuget push -Source NuGet -ConfigFile %NUGET_CONFIG% -SkipDuplicate "%PACKAGES_DIR%\*.nupkg"
   displayName: Push Nuget Packages to nuget.org
-  condition: and(succeeded(), ne(variables['package_count'],0))
+  condition: and(succeeded(), eq(variables['push_packages'], 'True'))
   env:
     PACKAGES_DIR: $(Build.ArtifactStagingDirectory)
     NUGET_CONFIG: $(Build.ArtifactStagingDirectory)\nuget.publish.config
@@ -282,11 +285,14 @@ steps:
 
 - task: GithubRelease@1 
   displayName: 'Create GitHub Release'
-  condition: and(succeeded(), ne(variables['package_count'],0))
+  condition: and(succeeded(), eq(variables['push_packages'], 'True'))
   inputs:
     gitHubConnection: github-czemacleod
     repositoryName: CZEMacLeod/C3D.Extensions.Aspire.IISExpress
+    tagSource: userSpecifiedTag
+    tag: v$(Build.BuildNumber)
     assets: $(Build.ArtifactStagingDirectory)/*.nupkg
     addChangeLog: true
     releaseNotesSource: filePath
     releaseNotesFilePath: $(Agent.TempDirectory)/ReleaseNotes.md
+    
