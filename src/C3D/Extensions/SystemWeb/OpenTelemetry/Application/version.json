@@ -11,10 +11,5 @@
   "release": {
     "enabled": false // Disable release builds
   },
-  "cloudBuild": {
-    "buildNumber": {
-      "enabled": true
-    }
-  },
   "buildNumberOffset": 1
 }

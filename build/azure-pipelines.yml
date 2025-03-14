@@ -192,15 +192,8 @@ steps:
 - task: PowerShell@2
   displayName: 'Detect packages'
   inputs:
-   targetType: inline
-   script: |
-     $dir = $env:BUILD_ARTIFACTSTAGINGDIRECTORY + "\*.nupkg"
-     Write-Host "Package Directory: $dir"
-     $packages = Get-ChildItem -Path $dir -Recurse
-     $ids = $packages | Select-Object -ExpandProperty name
-     Write-Host "Packages: $ids"
-     Write-Host "Package Count: $($packages.Count)"
-     Write-Host ("##vso[task.setvariable variable=package_count;]$($packages.Count)")
+    targetType: filePath
+    filePath: 'build/DetectPackages.ps1'
 
 # Run the signing command
 - task: PowerShell@2
@@ -289,8 +282,11 @@ steps:
 
 - task: GithubRelease@1 
   displayName: 'Create GitHub Release'
+  condition: and(succeeded(), ne(variables['package_count'],0))
   inputs:
     gitHubConnection: github-czemacleod
     repositoryName: CZEMacLeod/C3D.Extensions.Aspire.IISExpress
     assets: $(Build.ArtifactStagingDirectory)/*.nupkg
     addChangeLog: true
+    releaseNotesSource: filePath
+    releaseNotesFilePath: $(Agent.TempDirectory)/ReleaseNotes.md
