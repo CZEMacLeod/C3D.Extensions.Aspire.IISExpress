@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using OpenTelemetry;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
+using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using System.Web.Hosting;
 
@@ -33,6 +34,7 @@ public class OpenTelemeteryApplication : System.Web.HttpApplication
         });
 
         services.AddOpenTelemetry()
+            .ConfigureResource(ConfigureResource)
             .WithTracing(ConfigureTracing)
             .WithMetrics(ConfigureMetrics)
             .WithLogging(ConfigureLogging)
@@ -47,10 +49,9 @@ public class OpenTelemeteryApplication : System.Web.HttpApplication
         HostingEnvironment.RegisterObject(new OpenTelemetryRunner(serviceProvider));
     }
 
-    protected virtual void ConfigureLogging(LoggerProviderBuilder logging)
-    {
+    protected virtual void ConfigureResource(ResourceBuilder builder) { }
 
-    }
+    protected virtual void ConfigureLogging(LoggerProviderBuilder logging) { }
 
     protected virtual void ConfigureMetrics(MeterProviderBuilder metrics)
     {
@@ -66,13 +67,9 @@ public class OpenTelemeteryApplication : System.Web.HttpApplication
             .AddHttpClientInstrumentation();
     }
 
-    protected virtual ServiceCollection CreateServiceCollection() => new ServiceCollection();
+    protected virtual ServiceCollection CreateServiceCollection() => new();
 
-    protected virtual void ConfigureServiceProvider(ServiceCollection services)
-    {
-    }
+    protected virtual void ConfigureServiceProvider(ServiceCollection services) { }
 
-    protected virtual void UseServiceProvider(ServiceProvider serviceProvider)
-    {
-    }
+    protected virtual void UseServiceProvider(ServiceProvider serviceProvider) { }
 }
