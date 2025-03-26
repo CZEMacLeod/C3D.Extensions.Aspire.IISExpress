@@ -14,6 +14,15 @@ A set of packages to make it easier to work with IIS Express / System.Web projec
 [![NuGet package](https://img.shields.io/nuget/v/C3D.Extensions.Aspire.VisualStudioDebug.svg)](https://nuget.org/packages/C3D.Extensions.Aspire.VisualStudioDebug)
 [![NuGet downloads](https://img.shields.io/nuget/dt/C3D.Extensions.Aspire.VisualStudioDebug.svg)](https://nuget.org/packages/C3D.Extensions.Aspire.VisualStudioDebug)
 
+## [C3D.Extensions.Aspire.OutputWatcher](src/C3D/Extensions/Aspire/OutputWatcher/README.md)
+[![NuGet package](https://img.shields.io/nuget/v/C3D.Extensions.Aspire.OutputWatcher.svg)](https://nuget.org/packages/C3D.Extensions.Aspire.OutputWatcher)
+[![NuGet downloads](https://img.shields.io/nuget/dt/C3D.Extensions.Aspire.OutputWatcher.svg)](https://nuget.org/packages/C3D.Extensions.Aspire.OutputWatcher)
+
+## [C3D.Extensions.Aspire.WaitForOutput](src/C3D/Extensions/Aspire/WaitForOutput/README.md)
+[![NuGet package](https://img.shields.io/nuget/v/C3D.Extensions.Aspire.WaitForOutput.svg)](https://nuget.org/packages/C3D.Extensions.Aspire.WaitForOutput)
+[![NuGet downloads](https://img.shields.io/nuget/dt/C3D.Extensions.Aspire.WaitForOutput.svg)](https://nuget.org/packages/C3D.Extensions.Aspire.WaitForOutput)
+
+
 # Support Packages
 
 ## [C3D.Extensions.VisualStudioDebug](src/C3D/Extensions/VisualStudioDebug/README.md)
@@ -50,3 +59,7 @@ This consists of a Full Framework example app using MVC, with some of the code f
 The Core app is lightweight and only contains YARP, a Session variable route (per the RemoteSession example), OTLP telemetry, and HeathChecks.
 Apire sets up a randomized app key used by both applications, and wires up the Urls for YARP etc.
 Traces show the request span of the core app, the proxy request, and the framework processing.
+
+## WaitForConsole
+This shows how to use the WaitForOutput package to wait for a console app to output a specific message before starting another process.
+It also shows how to monitor for a string using a regex, and use the matched string as an environment variable in the next process.
