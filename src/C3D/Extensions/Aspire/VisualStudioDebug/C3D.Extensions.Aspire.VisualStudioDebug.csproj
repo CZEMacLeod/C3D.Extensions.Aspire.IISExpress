@@ -17,4 +17,5 @@
     <PackageTag Include="VisualStudio" />
     <PackageTag Include="Debugger" />
   </ItemGroup>
+  <Import Project="..\..\HostingExtensions.Shared\HostingExtensions.Shared.projitems" Label="Shared" />
 </Project>

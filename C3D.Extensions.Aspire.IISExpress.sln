@@ -201,6 +201,7 @@ Global
 		SolutionGuid = {7A2C1EF4-C8A0-49A5-8198-0BFBDFE2EE42}
 	EndGlobalSection
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		src\C3D\Extensions\HostingExtensions.Shared\HostingExtensions.Shared.projitems*{2fc6474b-6f18-4bf2-bb66-53b8c7c2b84e}*SharedItemsImports = 5
 		src\C3D\Extensions\HostingExtensions.Shared\HostingExtensions.Shared.projitems*{c2c95c50-d091-d037-a5bd-1c6831ed1142}*SharedItemsImports = 5
 		src\C3D\Extensions\HostingExtensions.Shared\HostingExtensions.Shared.projitems*{db4c7646-4434-4511-9e15-4019fef2d975}*SharedItemsImports = 13
 	EndGlobalSection
