@@ -8,11 +8,8 @@ public static class HealthChecksExtensions
 {
     public static ResourceHealthChecksBuilder<TResource> WithLocalHealthChecks<TResource>(this
         IResourceBuilder<TResource> resourceBuilder)
-        where TResource : IResource
-    {
-        return new(resourceBuilder, resourceBuilder.ApplicationBuilder.Services.AddHealthChecks());
-
-    }
+        where TResource : IResource => 
+        new(resourceBuilder, resourceBuilder.ApplicationBuilder.Services.AddHealthChecks());
 
     public class ResourceHealthChecksBuilder<TResource> : IResourceBuilder<TResource>, IHealthChecksBuilder
         where TResource : IResource

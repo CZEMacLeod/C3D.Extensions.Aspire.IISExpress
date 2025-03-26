@@ -1,5 +1,5 @@
 ﻿using Aspire.Hosting.ApplicationModel;
-using C3D.Extensions.Aspire.OutputWatcher;
+using C3D.Extensions.Aspire.WaitForOutput;
 using C3D.Extensions.Aspire.OutputWatcher.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using System.Text.RegularExpressions;

@@ -3,7 +3,7 @@ using C3D.Extensions.Aspire.OutputWatcher.Annotations;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
 
-namespace C3D.Extensions.Aspire.OutputWatcher;
+namespace C3D.Extensions.Aspire.WaitForOutput;
 
 public class WaitForOutputHealthCheck : IHealthCheck
 {
