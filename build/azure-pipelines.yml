@@ -101,6 +101,7 @@ steps:
 
 - task: PowerShell@2
   displayName: 'Get Commit IDs'
+  condition: ne(variables['git_commit_ids'], ' ')
   env:
     SYSTEM_ACCESSTOKEN: $(System.AccessToken)
   inputs:
