@@ -289,7 +289,7 @@ steps:
   displayName: Tag build
   env:
     BuildNumber: $(Build.BuildNumber)
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+  condition: and(succeeded(), eq(variables['branchName'], 'main'))
 
 - task: GithubRelease@1 
   displayName: 'Create GitHub Release'

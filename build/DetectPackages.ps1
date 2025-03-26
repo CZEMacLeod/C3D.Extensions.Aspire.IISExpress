@@ -16,9 +16,8 @@ ForEach ($id in $ids) {
 		Version = $version
 	}
 	if ($env:branchName -eq "main") {
-		$tag = "$pkg.Name_v$pkg.Version"
+		$tag = "$($pkg.Name)_v$($pkg.Version)
 		Write-Host "Tagging Build: $tag"
-		$message = "Package $pkg.Name Version $pkg.Version"
 		git tag $tag
 	}
 	$pkgs += $pkg
