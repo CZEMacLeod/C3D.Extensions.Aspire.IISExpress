@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 
 namespace Aspire.Hosting;
 
-public static class OutputWatcherExtensions
+public static partial class OutputWatcherExtensions
 {
     public static IServiceCollection AddResourceOutputWatcher(this IServiceCollection services) =>
         services.InsertHostedService<ResourceOutputWatcherService>();
@@ -77,4 +77,30 @@ public static class OutputWatcherExtensions
             where TAnnotation : IResourceAnnotation
                 => ResourceBuilder.WithAnnotation(annotation, behavior);
     }
+
+    public static OutputWatcherBuilder<TResource, TAnnotation> WithValueProvider<TResource, TAnnotation>(this
+        OutputWatcherBuilder<TResource, TAnnotation> builder,
+        Func<OutputWatcherRegExAnnotation, ValueTask<string?>> valueFunc)
+        where TResource : IResource
+        where TAnnotation : OutputWatcherRegExAnnotation
+    {
+        builder.Annotation.ValueFunc = valueFunc;
+        return builder;
+    }
+
+    public static OutputWatcherAnnotationValueProvider<TAnnotation> GetValueProvider<TResource, TAnnotation>(this
+        OutputWatcherBuilder<TResource, TAnnotation> builder,
+        string property,
+        Func<object?, ValueTask<string?>>? formatter = null)
+        where TResource : IResource
+        where TAnnotation : OutputWatcherRegExAnnotation
+            => new(builder.Resource, builder.Annotation, property, formatter);
+
+    public static ReferenceExpression GetReferenceExpression<TResource, TAnnotation>(this
+        OutputWatcherBuilder<TResource, TAnnotation> builder,
+        string property,
+        Func<object?, ValueTask<string?>>? formatter = null)
+        where TResource : IResource
+        where TAnnotation : OutputWatcherRegExAnnotation
+            => ReferenceExpression.Create($"{builder.GetValueProvider(property, formatter)}");
 }

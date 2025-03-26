@@ -1,6 +1,6 @@
 using C3D.Extensions.Aspire.OutputWatcher;
-using Google.Protobuf.WellKnownTypes;
-using System.Globalization;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using System.Text.RegularExpressions;
 
 internal partial class Program
@@ -23,7 +23,10 @@ internal partial class Program
         // The GetMagic Regex will capture the magic number from the console app output and store it as a property
         // The output string will be of the format "{number} is the magic number!"
         // Once it is detected, we can store it in a ReferenceExpression to be used as an environment variable in the next project
-        ReferenceExpression? magicNumber = null;
+        //ReferenceExpression? magicNumber = null;
+
+        var magicNumber = console.GetReferenceExpression("magic");
+
         var magicNumberSubscription = builder.Eventing.Subscribe<OutputMatchedEvent>(console.Resource, (o, c) =>
         {
             if (o.Key == "magic")
@@ -32,9 +35,10 @@ internal partial class Program
                 // The regex match group capture is 'magic' and will be stored as a property.
                 var number = int.Parse(o.Properties["magic"].ToString()!);
                 
-                var reb = new ReferenceExpressionBuilder();
-                reb.AppendFormatted($"{number}");
-                magicNumber = reb.Build();
+                o.ServiceProvider.GetRequiredService<ILogger<Program>>().LogInformation($"{number} is the magic number!");
+                //var reb = new ReferenceExpressionBuilder();
+                //reb.AppendFormatted($"{number}");
+                //magicNumber = reb.Build();
             }
 
             return Task.CompletedTask;
@@ -46,13 +50,7 @@ internal partial class Program
             .WithReference(sqldb, "sqldb")
             .WaitFor(sqldb)
             .WaitForOutput(console, m => m == "Ready Now...")
-            .WithEnvironment(c =>
-            {
-                if (magicNumber is not null)
-                {
-                    c.EnvironmentVariables["MAGIC_NUMBER"] = magicNumber;
-                }
-            });
+            .WithEnvironment("MAGIC_NUMBER", magicNumber);
 
         builder.Build().Run();
     }
