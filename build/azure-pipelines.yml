@@ -193,10 +193,6 @@ steps:
 #    failOnMinTestsNotRunFail: false
 #    failIfCoverageEmpty: false
 
-- task: PublishBuildArtifacts@1
-  inputs:
-    PathtoPublish: '$(build.artifactstagingdirectory)'
-
 - task: PowerShell@2
   displayName: 'Detect packages'
   inputs:
@@ -204,6 +200,10 @@ steps:
     filePath: 'build/DetectPackages.ps1'
   env:
     branchName: $(variables['branchName'])
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(build.artifactstagingdirectory)'
 
 # Run the signing command
 - task: PowerShell@2
@@ -304,5 +304,5 @@ steps:
     assets: $(Build.ArtifactStagingDirectory)/*.nupkg
     addChangeLog: true
     releaseNotesSource: filePath
-    releaseNotesFilePath: $(Agent.TempDirectory)/ReleaseNotes.md
+    releaseNotesFilePath: $(Build.ArtifactStagingDirectory)/ReleaseNotes.md
     

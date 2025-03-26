@@ -30,7 +30,7 @@ Write-Host "Package Count: $($packages.Count)"
 Write-Host ("##vso[task.setvariable variable=package_count;]$($packages.Count)")
 $pushPackages = ($env:branchName -eq "main") -and ($packages.Count -gt 0)
 Write-Host ("##vso[task.setvariable variable=push_packages;]$($pushPackages)")
-$releaseNotes = $env:AGENT_TEMPDIRECTORY + "\ReleaseNotes.md"
+$releaseNotes = $env:BUILD_ARTIFACTSTAGINGDIRECTORY + "\ReleaseNotes.md"
 $header = "## Packages$([Environment]::NewLine)"
-$header | Out-File $releaseNotes
-$pkgs | ConvertTo-MarkdownTable | Add-Content $releaseNotes
+$header | Out-File $releaseNotes -Encoding ascii
+$pkgs | ConvertTo-MarkdownTable | Add-Content $releaseNotes -Encoding ascii
