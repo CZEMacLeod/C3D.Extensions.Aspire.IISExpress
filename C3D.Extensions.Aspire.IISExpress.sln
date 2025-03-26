@@ -26,9 +26,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{B02941E8-EB9
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{A0E19FE4-77FC-4D32-B29C-D31909D2DBC2}"
-	ProjectSection(SolutionItems) = preProject
-		samples\Directory.Build.props = samples\Directory.Build.props
-	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "C3D.Extensions.Aspire.IISExpress", "src\C3D\Extensions\Aspire\IISExpress\C3D.Extensions.Aspire.IISExpress.csproj", "{6156F6B9-89C5-445D-AD9C-F71C80C4A330}"
 EndProject
@@ -53,9 +50,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LegacyWebApplication", "samples\Legacy\LegacyWebApplication\LegacyWebApplication.csproj", "{85C0E2EE-A1DB-40D8-BE13-44B740101986}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SWA", "SWA", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
-	ProjectSection(SolutionItems) = preProject
-		samples\SWA\version.json = samples\SWA\version.json
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SWAFramework", "samples\SWA\SWAFramework\SWAFramework.csproj", "{08170CE6-B907-4266-A91D-4176905720A3}"
 EndProject
@@ -68,6 +62,22 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "C3D.Extensions.Aspire.VisualStudioDebug", "src\C3D\Extensions\Aspire\VisualStudioDebug\C3D.Extensions.Aspire.VisualStudioDebug.csproj", "{2FC6474B-6F18-4BF2-BB66-53B8C7C2B84E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "C3D.Extensions.VisualStudioDebug", "src\C3D\Extensions\VisualStudioDebug\C3D.Extensions.VisualStudioDebug.csproj", "{EC5EAC82-FCAA-4134-B101-DDECC71D9AF5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "C3D.Extensions.Aspire.OutputWatcher", "src\C3D\Extensions\Aspire\OutputWatcher\C3D.Extensions.Aspire.OutputWatcher.csproj", "{C2C95C50-D091-D037-A5BD-1C6831ED1142}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "C3D.Extensions.HostingExtensions.Shared", "src\C3D\Extensions\HostingExtensions.Shared\C3D.Extensions.HostingExtensions.Shared.shproj", "{DB4C7646-4434-4511-9E15-4019FEF2D975}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "C3D.Extensions.Aspire.WaitForOutput", "src\C3D\Extensions\Aspire\WaitForOutput\C3D.Extensions.Aspire.WaitForOutput.csproj", "{07E3ECEB-E1AC-4566-869E-3523473FD45E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WaitForConsole", "WaitForConsole", "{3CE52242-69A6-4569-96CB-483D7116522D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspireAppHostWaitForConsole", "samples\WaitForOutput\AspireWaitForConsoleOutput.AppHost\AspireAppHostWaitForConsole.csproj", "{6A2453E7-26E2-899F-4A97-1EB4F0CB440C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WaitForConsole.Shared", "samples\WaitForOutput\AspireWaitForConsoleOutput.ServiceDefaults\WaitForConsole.Shared.csproj", "{C65F331E-ABE2-C5E3-2BD6-77E040124C29}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WaitForConsole.ConsoleApp", "samples\WaitForOutput\ConsoleApp\WaitForConsole.ConsoleApp.csproj", "{69B8531B-EDA8-5DB5-6D55-3DF3F8D1310F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WaitForConsole.WebApp", "samples\WaitForOutput\WebApplication\WaitForConsole.WebApp.csproj", "{111E1366-2322-3E44-36B2-60EDFB12A478}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -131,6 +141,30 @@ Global
 		{EC5EAC82-FCAA-4134-B101-DDECC71D9AF5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EC5EAC82-FCAA-4134-B101-DDECC71D9AF5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EC5EAC82-FCAA-4134-B101-DDECC71D9AF5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C2C95C50-D091-D037-A5BD-1C6831ED1142}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C2C95C50-D091-D037-A5BD-1C6831ED1142}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C2C95C50-D091-D037-A5BD-1C6831ED1142}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C2C95C50-D091-D037-A5BD-1C6831ED1142}.Release|Any CPU.Build.0 = Release|Any CPU
+		{07E3ECEB-E1AC-4566-869E-3523473FD45E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{07E3ECEB-E1AC-4566-869E-3523473FD45E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{07E3ECEB-E1AC-4566-869E-3523473FD45E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{07E3ECEB-E1AC-4566-869E-3523473FD45E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6A2453E7-26E2-899F-4A97-1EB4F0CB440C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6A2453E7-26E2-899F-4A97-1EB4F0CB440C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6A2453E7-26E2-899F-4A97-1EB4F0CB440C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6A2453E7-26E2-899F-4A97-1EB4F0CB440C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C65F331E-ABE2-C5E3-2BD6-77E040124C29}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C65F331E-ABE2-C5E3-2BD6-77E040124C29}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C65F331E-ABE2-C5E3-2BD6-77E040124C29}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C65F331E-ABE2-C5E3-2BD6-77E040124C29}.Release|Any CPU.Build.0 = Release|Any CPU
+		{69B8531B-EDA8-5DB5-6D55-3DF3F8D1310F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{69B8531B-EDA8-5DB5-6D55-3DF3F8D1310F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{69B8531B-EDA8-5DB5-6D55-3DF3F8D1310F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{69B8531B-EDA8-5DB5-6D55-3DF3F8D1310F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{111E1366-2322-3E44-36B2-60EDFB12A478}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{111E1366-2322-3E44-36B2-60EDFB12A478}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{111E1366-2322-3E44-36B2-60EDFB12A478}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{111E1366-2322-3E44-36B2-60EDFB12A478}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -154,8 +188,20 @@ Global
 		{CC2EA056-A6F4-481B-87A5-A41B0158C178} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{2FC6474B-6F18-4BF2-BB66-53B8C7C2B84E} = {B02941E8-EB9F-4AFF-8383-6B231DD01754}
 		{EC5EAC82-FCAA-4134-B101-DDECC71D9AF5} = {B02941E8-EB9F-4AFF-8383-6B231DD01754}
+		{C2C95C50-D091-D037-A5BD-1C6831ED1142} = {B02941E8-EB9F-4AFF-8383-6B231DD01754}
+		{DB4C7646-4434-4511-9E15-4019FEF2D975} = {B02941E8-EB9F-4AFF-8383-6B231DD01754}
+		{07E3ECEB-E1AC-4566-869E-3523473FD45E} = {B02941E8-EB9F-4AFF-8383-6B231DD01754}
+		{3CE52242-69A6-4569-96CB-483D7116522D} = {A0E19FE4-77FC-4D32-B29C-D31909D2DBC2}
+		{6A2453E7-26E2-899F-4A97-1EB4F0CB440C} = {3CE52242-69A6-4569-96CB-483D7116522D}
+		{C65F331E-ABE2-C5E3-2BD6-77E040124C29} = {3CE52242-69A6-4569-96CB-483D7116522D}
+		{69B8531B-EDA8-5DB5-6D55-3DF3F8D1310F} = {3CE52242-69A6-4569-96CB-483D7116522D}
+		{111E1366-2322-3E44-36B2-60EDFB12A478} = {3CE52242-69A6-4569-96CB-483D7116522D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {7A2C1EF4-C8A0-49A5-8198-0BFBDFE2EE42}
+	EndGlobalSection
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		src\C3D\Extensions\HostingExtensions.Shared\HostingExtensions.Shared.projitems*{c2c95c50-d091-d037-a5bd-1c6831ed1142}*SharedItemsImports = 5
+		src\C3D\Extensions\HostingExtensions.Shared\HostingExtensions.Shared.projitems*{db4c7646-4434-4511-9e15-4019fef2d975}*SharedItemsImports = 13
 	EndGlobalSection
 EndGlobal
