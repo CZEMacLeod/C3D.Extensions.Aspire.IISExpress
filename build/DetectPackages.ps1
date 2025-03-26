@@ -4,6 +4,7 @@ Write-Host "Package Directory: $dir"
 $packages = Get-ChildItem -Path $dir -Recurse
 $ids = $packages | Select-Object -ExpandProperty name
 $pkgs = @()
+Write-Host "Source Branch Name: $env:BUILD_SOURCEBRANCHNAME"
 $origin = "HEAD:$env:BUILD_SOURCEBRANCHNAME"
 ForEach ($id in $ids) {
 	$names = $id.Split(".")
