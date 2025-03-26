@@ -23,10 +23,11 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.SystemWebAdapters.CoreServices" Version="2.0.0" />
     <PackageReference Include="Yarp.ReverseProxy" Version="2.3.0" />
-    <PackageReference Include="Nerdbank.GitVersioning" Version="3.3.37" PrivateAssets="All" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\SWALibrary\SWALibrary.csproj" />
   </ItemGroup>
+
+  <Import Project="..\SWAShared\SWAShared.projitems" Label="Shared" />
 </Project>

@@ -38,7 +38,7 @@ public class OpenTelemeteryApplication : System.Web.HttpApplication
             .WithTracing(ConfigureTracing)
             .WithMetrics(ConfigureMetrics)
             .WithLogging(ConfigureLogging)
-        .UseOtlpExporter();
+            .UseOtlpExporter();
 
         ConfigureServiceProvider(services);
 

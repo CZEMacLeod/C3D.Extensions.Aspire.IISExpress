@@ -1,0 +1,21 @@
+<Project>
+  <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" />
+
+  <PropertyGroup>
+    <GitVersionBaseDirectory>$(MSBuildThisFileDirectory)</GitVersionBaseDirectory>
+    <GenerateRepositoryUrlAttribute>true</GenerateRepositoryUrlAttribute>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Nerdbank.GitVersioning" Version="3.3.37" PrivateAssets="All" />
+  </ItemGroup>
+
+  <Target Name="GetBuildVersion" />
+  <Target Name="AddGitAssemblyInfo" DependsOnTargets="GetBuildVersion" BeforeTargets="GetAssemblyAttributes"
+          Returns="@(AssemblyMetadata)">
+    <ItemGroup>
+      <AssemblyMetadata Include="GitCommitId" Value="$(GitCommitId)" />
+      <AssemblyMetadata Include="GitCommitDateTicks" Value="$(GitCommitDateTicks)" />
+    </ItemGroup>
+  </Target>
+</Project>

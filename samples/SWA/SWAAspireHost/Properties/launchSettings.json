@@ -9,8 +9,11 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "DOTNET_ENVIRONMENT": "Development",
-        /* OTLP endpoint must be http for netframework due to GRPC.Core issue */
+        /* OTLP endpoint must be http for netframework due to GRPC.Core issue
         "DOTNET_DASHBOARD_OTLP_ENDPOINT_URL": "http://localhost:21154",
+        Alternatively, we can use the http/protobuf endpoint and https
+        */
+        "DOTNET_DASHBOARD_OTLP_HTTP_ENDPOINT_URL": "https://localhost:21154",
         "DOTNET_RESOURCE_SERVICE_ENDPOINT_URL": "https://localhost:22191"
       }
     },

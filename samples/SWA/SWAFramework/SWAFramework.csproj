@@ -32,7 +32,6 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.Configuration.ConfigurationBuilders.Environment" Version="3.0.0" />
-    <PackageReference Include="Nerdbank.GitVersioning" Version="3.3.37" PrivateAssets="All" />
   </ItemGroup>
   <ItemGroup Label="SystemWebAdapters">
     <PackageReference Include="Microsoft.AspNetCore.DataProtection.SystemWeb" Version="2.3.0" />
@@ -69,4 +68,6 @@
     <ProjectReference Include="..\..\..\src\C3D\Extensions\SystemWeb\OpenTelemetry\Application\C3D.Extensions.SystemWeb.OpenTelemetry.Application.csproj" />
     <ProjectReference Include="..\SWALibrary\SWALibrary.csproj" />
   </ItemGroup>
+  
+  <Import Project="..\SWAShared\SWAShared.projitems" Label="Shared" />
 </Project>

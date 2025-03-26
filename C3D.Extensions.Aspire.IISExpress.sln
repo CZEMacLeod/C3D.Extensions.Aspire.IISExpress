@@ -28,6 +28,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{B02941E8-EB9
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{A0E19FE4-77FC-4D32-B29C-D31909D2DBC2}"
+	ProjectSection(SolutionItems) = preProject
+		samples\Directory.Build.props = samples\Directory.Build.props
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "C3D.Extensions.Aspire.IISExpress", "src\C3D\Extensions\Aspire\IISExpress\C3D.Extensions.Aspire.IISExpress.csproj", "{6156F6B9-89C5-445D-AD9C-F71C80C4A330}"
 EndProject
@@ -52,6 +55,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LegacyWebApplication", "samples\Legacy\LegacyWebApplication\LegacyWebApplication.csproj", "{85C0E2EE-A1DB-40D8-BE13-44B740101986}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SWA", "SWA", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+	ProjectSection(SolutionItems) = preProject
+		samples\SWA\Directory.Build.props = samples\SWA\Directory.Build.props
+		samples\SWA\version.json = samples\SWA\version.json
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SWAFramework", "samples\SWA\SWAFramework\SWAFramework.csproj", "{08170CE6-B907-4266-A91D-4176905720A3}"
 EndProject
@@ -80,6 +87,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WaitForConsole.ConsoleApp", "samples\WaitForOutput\ConsoleApp\WaitForConsole.ConsoleApp.csproj", "{69B8531B-EDA8-5DB5-6D55-3DF3F8D1310F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WaitForConsole.WebApp", "samples\WaitForOutput\WebApplication\WaitForConsole.WebApp.csproj", "{111E1366-2322-3E44-36B2-60EDFB12A478}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "SWAShared", "samples\SWA\SWAShared\SWAShared.shproj", "{AC506891-D58A-4506-B26C-B48D8420871E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -198,12 +207,16 @@ Global
 		{C65F331E-ABE2-C5E3-2BD6-77E040124C29} = {3CE52242-69A6-4569-96CB-483D7116522D}
 		{69B8531B-EDA8-5DB5-6D55-3DF3F8D1310F} = {3CE52242-69A6-4569-96CB-483D7116522D}
 		{111E1366-2322-3E44-36B2-60EDFB12A478} = {3CE52242-69A6-4569-96CB-483D7116522D}
+		{AC506891-D58A-4506-B26C-B48D8420871E} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {7A2C1EF4-C8A0-49A5-8198-0BFBDFE2EE42}
 	EndGlobalSection
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		samples\SWA\SWAShared\SWAShared.projitems*{08170ce6-b907-4266-a91d-4176905720a3}*SharedItemsImports = 5
 		src\C3D\Extensions\HostingExtensions.Shared\HostingExtensions.Shared.projitems*{2fc6474b-6f18-4bf2-bb66-53b8c7c2b84e}*SharedItemsImports = 5
+		samples\SWA\SWAShared\SWAShared.projitems*{9e38817e-fef4-4267-b9e4-2dacd33995c8}*SharedItemsImports = 5
+		samples\SWA\SWAShared\SWAShared.projitems*{ac506891-d58a-4506-b26c-b48d8420871e}*SharedItemsImports = 13
 		src\C3D\Extensions\HostingExtensions.Shared\HostingExtensions.Shared.projitems*{c2c95c50-d091-d037-a5bd-1c6831ed1142}*SharedItemsImports = 5
 		src\C3D\Extensions\HostingExtensions.Shared\HostingExtensions.Shared.projitems*{db4c7646-4434-4511-9e15-4019fef2d975}*SharedItemsImports = 13
 	EndGlobalSection

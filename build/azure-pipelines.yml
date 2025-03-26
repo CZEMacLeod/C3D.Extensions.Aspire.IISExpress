@@ -117,6 +117,9 @@ steps:
       Write-Host "Commits since last (successful) build: $($changes.count)"
       $ids = $changes.value | Select-Object -ExpandProperty id
       $git_commit_ids = $ids -join ";"
+      if ($env:GIT_COMMIT_IDS -ne " ") {
+        $git_commit_ids = $env:GIT_COMMIT_IDS + ";" + $git_commit_ids
+      }
       Write-Host "Commit IDs: $git_commit_ids"
       Write-Host ("##vso[task.setvariable variable=git_commit_ids;]$git_commit_ids")
 

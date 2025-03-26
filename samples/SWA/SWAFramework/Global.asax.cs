@@ -7,7 +7,6 @@ using System.Web.Optimization;
 using System.Web.Routing;
 using C3D.Extensions.SystemWeb.OpenTelemetry.Application;
 using OpenTelemetry.Resources;
-using System.Collections.Generic;
 
 namespace SWAFramework;
 
@@ -54,17 +53,11 @@ public class MvcApplication : OpenTelemeteryApplication
         }
     }
 
-    private static readonly Dictionary<string, object> GitResourceAttributes = new() {
-        { "vcs.system",      "git" },
-        { "vcs.commit.id",   ThisAssembly.GitCommitId },
-        { "vcs.commit.date", ThisAssembly.GitCommitDate.ToString("O") }
-    };
-
     protected override void ConfigureResource(ResourceBuilder builder)
     {
         base.ConfigureResource(builder);
         builder.AddProcessRuntimeDetector();
-        builder.AddAttributes(GitResourceAttributes);
+        builder.AddAssemblyMetadataDetector();
     }
 }
 

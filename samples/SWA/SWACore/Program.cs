@@ -8,12 +8,6 @@ namespace SWACore;
 
 public class Program
 {
-    private static readonly Dictionary<string, object> GitResourceAttributes = new() {
-        { "vcs.system",      "git" },
-        { "vcs.commit.id",   ThisAssembly.GitCommitId },
-        { "vcs.commit.date", ThisAssembly.GitCommitDate.ToString("O") }
-    };
-
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
@@ -29,7 +23,7 @@ public class Program
             .ConfigureResource(resource =>
             {
                 resource.AddProcessRuntimeDetector();
-                resource.AddAttributes(GitResourceAttributes);
+                resource.AddAssemblyMetadataDetector();
             });
 
         // Add Metrics for ASP.NET Core and our custom metrics and export via OTLP
