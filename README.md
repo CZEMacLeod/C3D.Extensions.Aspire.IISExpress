@@ -1,7 +1,6 @@
 # C3D.Extensions.Aspire
 
-[![Build Status](https://dev.azure.com/flexviews/OSS.Build/_apis/build/status%2FCZEMacLeod.C3D.Extensions.Aspire.IISExpress?branchName=main)](https://dev.azure.com/flexviews/OSS.Build/_build/latest?definitionId=87&branchName=main)
-
+[![Build Status](https://dev.azure.com/flexviews/OSS.Build/_apis/build/status%2FCZEMacLeod.C3D.Extensions.Aspire?branchName=main)](https://dev.azure.com/flexviews/OSS.Build/_build/latest?definitionId=88&branchName=main)
 A set of packages to make it easier to work with IIS Express / System.Web projects, and extend debugging in Aspire.
 
 # AppHost Packages
