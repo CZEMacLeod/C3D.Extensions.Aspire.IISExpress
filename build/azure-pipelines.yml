@@ -104,9 +104,11 @@ steps:
   condition: ne(variables['git_commit_ids'], ' ')
   env:
     SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+    GIT_COMMIT_IDS: $(variables['git_commit_ids'])
   inputs:
-   targetType: inline
-   script: |
+    targetType: inline
+    script: |
+      Write-Host "Passed Commit IDs: _ $env:GIT_COMMIT_IDS _" 
       $url = "$($env:SYSTEM_TEAMFOUNDATIONCOLLECTIONURI)$env:SYSTEM_TEAMPROJECTID/_apis/build/builds/$($env:BUILD_BUILDID)/changes?api-version=5.0"
       Write-Host "URL: $url"
       $changes = Invoke-RestMethod -Uri $url -Method Get -ContentType "application/json" -Headers @{
