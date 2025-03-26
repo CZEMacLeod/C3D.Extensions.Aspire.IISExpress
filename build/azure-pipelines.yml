@@ -32,6 +32,8 @@ parameters:
       - ' '
       - 'C3D.Extensions.Aspire.IISExpress'
       - 'C3D.Extensions.Aspire.VisualStudioDebug'
+      - 'C3D.Extensions.Aspire.OutputWatcher'
+      - 'C3D.Extensions.Aspire.WaitForOutput'
       - 'C3D.Extensions.SystemWeb.OpenTelemetry.Application' 
       - 'C3D.Extensions.VisualStudioDebug' 
 
