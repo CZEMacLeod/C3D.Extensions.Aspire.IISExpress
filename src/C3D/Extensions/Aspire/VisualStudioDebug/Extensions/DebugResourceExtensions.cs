@@ -1,7 +1,10 @@
 ﻿using Aspire.Hosting.ApplicationModel;
 using C3D.Extensions.Aspire.VisualStudioDebug;
 using C3D.Extensions.Aspire.VisualStudioDebug.Annotations;
+
+#pragma warning disable IDE0130 // Namespace does not match folder structure
 namespace Aspire.Hosting;
+#pragma warning restore IDE0130 // Namespace does not match folder structure
 
 public static class DebugResourceBuilderExtensions
 {

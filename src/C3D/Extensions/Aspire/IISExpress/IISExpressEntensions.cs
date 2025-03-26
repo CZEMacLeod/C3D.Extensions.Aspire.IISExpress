@@ -6,13 +6,15 @@ using C3D.Extensions.Aspire.VisualStudioDebug;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
+#pragma warning disable IDE0130 // Namespace does not match folder structure
 namespace Aspire.Hosting;
+#pragma warning restore IDE0130 // Namespace does not match folder structure
 
 public static class IISExpressEntensions
 {
     public static IResourceBuilder<IISExpressProjectResource> WithDebugger(this IResourceBuilder<IISExpressProjectResource> resourceBuilder,
         DebugMode debugMode = DebugMode.VisualStudio) =>
-        DebugResourceExtensions.WithDebugger(resourceBuilder, debugMode)
+        DebugResourceBuilderExtensions.WithDebugger(resourceBuilder, debugMode)
             .WithDebugEngine(C3D.Extensions.VisualStudioDebug.WellKnown.Engines.Net4)
             .WithDebuggerHealthcheck();
 

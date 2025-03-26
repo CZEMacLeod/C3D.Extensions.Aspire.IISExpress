@@ -4,7 +4,9 @@ using C3D.Extensions.Aspire.VisualStudioDebug.Annotations;
 using C3D.Extensions.Aspire.VisualStudioDebug.HealthChecks;
 using Microsoft.Extensions.DependencyInjection;
 
+#pragma warning disable IDE0130 // Namespace does not match folder structure
 namespace Aspire.Hosting;
+#pragma warning restore IDE0130 // Namespace does not match folder structure
 
 public static class DebugBuilderExtensions
 {

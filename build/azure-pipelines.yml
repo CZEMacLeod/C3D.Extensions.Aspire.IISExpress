@@ -73,6 +73,12 @@ variables:
   value: 'PackIfChanged'
 - name: 'nuget_version'
   value: '>=6.6.1'
+  ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/') }}:
+    name: 'branchName'
+    value: $[ replace(variables['Build.SourceBranch'], 'refs/heads/', '') ]
+  ${{ if startsWith(variables['Build.SourceBranch'], 'refs/pull/') }}:
+    name: 'branchName'
+    value: $[ replace(variables['System.PullRequest.TargetBranch'], 'refs/heads/', '') ]
 
 steps:
 - checkout: self
@@ -194,6 +200,8 @@ steps:
   inputs:
     targetType: filePath
     filePath: 'build/DetectPackages.ps1'
+  env:
+    branchName: $(variables['branchName'])
 
 # Run the signing command
 - task: PowerShell@2

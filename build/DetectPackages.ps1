@@ -5,7 +5,8 @@ $packages = Get-ChildItem -Path $dir -Recurse
 $ids = $packages | Select-Object -ExpandProperty name
 $pkgs = @()
 Write-Host "Source Branch Name: $env:BUILD_SOURCEBRANCHNAME"
-$origin = "HEAD:$env:BUILD_SOURCEBRANCHNAME"
+Write-Host "Branch Name: $env:branchName"
+$origin = "HEAD:$env:branchName"
 ForEach ($id in $ids) {
 	$names = $id.Split(".")
 	$name = $names[(0..($names.Length-5))] -join "."
@@ -14,7 +15,7 @@ ForEach ($id in $ids) {
 		Name = $name
 		Version = $version
 	}
-	if ($env:BUILD_SOURCEBRANCHNAME -eq "refs/heads/main") {
+	if ($env:branchName -eq "main") {
 		$tag = "$pkg.Name_v$pkg.Version"
 		Write-Host "Tagging Build: $tag"
 		$message = "Package $pkg.Name Version $pkg.Version"
@@ -22,13 +23,13 @@ ForEach ($id in $ids) {
 	}
 	$pkgs += $pkg
 }
-if ($env:BUILD_SOURCEBRANCHNAME -eq "refs/heads/main") {
+if ($env:branchName -eq "main") {
 	git push origin --tags
 }
 $pkgs | Format-Table -Property Name, Version
 Write-Host "Package Count: $($packages.Count)"
 Write-Host ("##vso[task.setvariable variable=package_count;]$($packages.Count)")
-$pushPackages = ($env:BUILD_SOURCEBRANCHNAME -eq "refs/heads/main") -and ($packages.Count -gt 0)
+$pushPackages = ($env:branchName -eq "main") -and ($packages.Count -gt 0)
 Write-Host ("##vso[task.setvariable variable=push_packages;]$($pushPackages)")
 $releaseNotes = $env:AGENT_TEMPDIRECTORY + "\ReleaseNotes.md"
 $header = "## Packages$([Environment]::NewLine)"
