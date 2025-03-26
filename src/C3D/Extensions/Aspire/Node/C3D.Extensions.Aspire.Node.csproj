@@ -4,13 +4,16 @@
     <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <AssemblyTitle>$(AssemblyTitle) Node</AssemblyTitle>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Aspire.Hosting.NodeJs" Version="9.1.0" />
+    <PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\OutputWatcher\C3D.Extensions.Aspire.OutputWatcher.csproj" />
     <ProjectReference Include="..\VisualStudioDebug\C3D.Extensions.Aspire.VisualStudioDebug.csproj" />
   </ItemGroup>
   
