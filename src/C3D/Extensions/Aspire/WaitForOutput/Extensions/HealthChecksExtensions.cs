@@ -24,7 +24,7 @@ public static class HealthChecksExtensions
             this.healthChecksBuilder = healthChecksBuilder;
         }
 
-        public IServiceCollection Services => throw new NotImplementedException();
+        public IServiceCollection Services => healthChecksBuilder.Services;
 
         public IDistributedApplicationBuilder ApplicationBuilder => resourceBuilder.ApplicationBuilder;
 
