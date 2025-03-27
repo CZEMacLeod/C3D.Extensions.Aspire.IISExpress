@@ -68,7 +68,7 @@ variables:
 - name: 'timestamper'
   value: ${{ parameters.timestamper }}
 - name: 'git_commit_ids'
-  value: ${{ parameters.git_commit_ids }}
+  value: ${{ trim(parameters.git_commit_ids) }}
 - name: 'project_to_build'
   value: ${{ parameters.project_to_build }}
 - name: 'target'
@@ -101,7 +101,7 @@ steps:
 
 - task: PowerShell@2
   displayName: 'Get Commit IDs'
-  condition: ne(variables['git_commit_ids'], ' ')
+  condition: ne(variables['git_commit_ids'], '')
   env:
     SYSTEM_ACCESSTOKEN: $(System.AccessToken)
     GIT_COMMIT_IDS: $(variables['git_commit_ids'])
@@ -117,7 +117,7 @@ steps:
       Write-Host "Commits since last (successful) build: $($changes.count)"
       $ids = $changes.value | Select-Object -ExpandProperty id
       $git_commit_ids = $ids -join ";"
-      if ($env:GIT_COMMIT_IDS -ne " ") {
+      if ($env:GIT_COMMIT_IDS -ne "") {
         $git_commit_ids = $env:GIT_COMMIT_IDS + ";" + $git_commit_ids
       }
       Write-Host "Commit IDs: $git_commit_ids"
