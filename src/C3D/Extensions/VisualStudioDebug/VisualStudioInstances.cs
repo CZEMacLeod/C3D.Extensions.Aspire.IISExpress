@@ -45,7 +45,7 @@ public class VisualStudioInstances : IDisposable
 
     public IEnumerable<VisualStudioInstance> GetVisualStudioInstances()
     {
-        var logger = serviceProvider.GetRequiredService<ILogger<VisualStudioInstance>>();
+        //var logger = serviceProvider.GetRequiredService<ILogger<VisualStudioInstance>>();
 
         RefreshVisualStudioInstances();
         foreach (var kvp in visualStudioInstances)
