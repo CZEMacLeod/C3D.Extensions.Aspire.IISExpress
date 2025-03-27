@@ -9,6 +9,7 @@ var wcf = builder.AddIISExpressProject<Projects.ExampleWCFWebApplication>("wcf")
     {
         if (u.Resource.TryGetEndpoints(out var endpoints))
         {
+            u.Urls.Clear(); // remove existing urls
             foreach (var ep in endpoints)
             {
                 u.Urls.Add(new()
@@ -34,6 +35,21 @@ var wcf = builder.AddIISExpressProject<Projects.ExampleWCFWebApplication>("wcf")
                     }.ToString(),
                     DisplayText = $"{ep.UriScheme} Add(420,0.69)"
                 });
+                if (ep.UriScheme == "http")
+                {
+                    u.Urls.Add(new()
+                    {
+                        Url = new UriBuilder()
+                        {
+                            Scheme = ep.UriScheme,
+                            Host = ep.AllocatedEndpoint!.Address,
+                            Port = ep.AllocatedEndpoint!.Port,
+                            Path = "service.svc",
+                            Query = "singleWsdl"
+                        }.ToString(),
+                        DisplayText = $"Service WSDL"
+                    });
+                }
             }
         }
     });

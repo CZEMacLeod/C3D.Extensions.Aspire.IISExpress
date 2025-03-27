@@ -13,11 +13,10 @@
 
   <ItemGroup>
     <PackageReference Include="Aspire.Hosting.AppHost" Version="9.2.0-preview.1.25176.12" />
+    <PackageReference Include="C3D.Extensions.Aspire.IISExpress" Version="0.1.14" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\C3D\Extensions\Aspire\IISExpress\C3D.Extensions.Aspire.IISExpress.csproj" IsAspireProjectResource="false" />
     <ProjectReference Include="..\..\..\MSBuild.SDK.SystemWeb\samples\WCF\WCF.Service.WebApplication\ExampleWCFWebApplication.csproj" />
   </ItemGroup>
-  <Import Project="..\..\src\C3D\Extensions\Aspire\IISExpress\build\C3D.Extensions.Aspire.IISExpress.props" />
 
 </Project>
