@@ -1,28 +1,23 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <Sdk Name="Aspire.AppHost.Sdk" Version="9.2.0-preview.1.25176.12" />
+
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <IsAspireHost>true</IsAspireHost>
-    <UserSecretsId>38868fb3-15a2-49dc-9f64-9179d9b44731</UserSecretsId>
+    <UserSecretsId>61e243de-3ff5-4d76-89d3-dde442605be6</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Aspire.Hosting.AppHost" Version="9.2.0-preview.1.25176.12" />
   </ItemGroup>
-
   <ItemGroup>
-    <ProjectReference Include="..\..\..\src\C3D\Extensions\Aspire\IISExpress\C3D.Extensions.Aspire.IISExpress.csproj" IsAspireProjectResource="false" />
+    <ProjectReference Include="..\..\src\C3D\Extensions\Aspire\IISExpress\C3D.Extensions.Aspire.IISExpress.csproj" IsAspireProjectResource="false" />
+    <ProjectReference Include="..\..\..\MSBuild.SDK.SystemWeb\samples\WCF\WCF.Service.WebApplication\ExampleWCFWebApplication.csproj" />
   </ItemGroup>
-  <Import Project="..\..\..\src\C3D\Extensions\Aspire\IISExpress\build\C3D.Extensions.Aspire.IISExpress.props" />
-  
-  <ItemGroup>
-    <ProjectReference Include="..\SimpleMVC\SimpleMVC.csproj">
-      <NoWarn>ASPIRE004</NoWarn>
-    </ProjectReference>
-  </ItemGroup>
-
+  <Import Project="..\..\src\C3D\Extensions\Aspire\IISExpress\build\C3D.Extensions.Aspire.IISExpress.props" />
 
 </Project>

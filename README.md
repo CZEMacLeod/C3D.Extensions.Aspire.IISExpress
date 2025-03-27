@@ -62,3 +62,11 @@ Traces show the request span of the core app, the proxy request, and the framewo
 ## WaitForConsole
 This shows how to use the WaitForOutput package to wait for a console app to output a specific message before starting another process.
 It also shows how to monitor for a string using a regex, and use the matched string as an environment variable in the next process.
+
+## External
+This shows how to use IIS Express projects from a different solution and repository.
+For the example, clone https://github.com/CZEMacLeod/MSBuild.SDK.SystemWeb to the parent folder of this repository.
+The External project will use the sample WCF project from the MSBuild.SDK.SystemWeb repository.
+You may need to run the project directly once to allow the IIS Express certificate to be trusted, and to ensure that the appropriate entries are added to the applicationHost.config file in this solution's directory.
+This also shows using Aspire 9.2.0 preview build to add custom URLs to the dashboard.
+This allows testing the service endpoints.
