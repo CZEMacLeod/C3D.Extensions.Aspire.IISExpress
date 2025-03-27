@@ -50,8 +50,6 @@ public class ResourceOutputWatcherService : BackgroundService
 
     private async Task WatchResourceAsync(IResource resource, CancellationToken stoppingToken)
     {
-        
-
         logger.LogInformation("Waiting for {Resource} output", resource.Name);
         if (resource.TryGetAnnotationsOfType<OutputWatcherAnnotationBase>(out var annotations))
         {
@@ -77,14 +75,17 @@ public class ResourceOutputWatcherService : BackgroundService
                     }
                     try
                     {
-                        var message = DateTimeOffset.TryParseExact(
-                            line.Content.AsSpan()[..ConsoleLogsTimestampFormatLength], ConsoleLogsTimestampFormat,
-                            CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out var timeStamp)
-                            ? line.Content[MessageStartOffset..] : line.Content;
-
-                        foreach (var annotation in annotations)
+                        if (!string.IsNullOrEmpty(line.Content))
                         {
-                            await ProcessLineAsync(resource, annotation, timeStamp, message, stoppingToken);
+                            var message = DateTimeOffset.TryParseExact(
+                                line.Content.AsSpan()[..ConsoleLogsTimestampFormatLength], ConsoleLogsTimestampFormat,
+                                CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out var timeStamp)
+                                ? line.Content[MessageStartOffset..] : line.Content;
+
+                            foreach (var annotation in annotations)
+                            {
+                                await ProcessLineAsync(resource, annotation, timeStamp, message, stoppingToken);
+                            }
                         }
                     }
                     catch (Exception e)
