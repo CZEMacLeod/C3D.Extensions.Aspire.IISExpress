@@ -154,7 +154,14 @@ public class VisualStudioInstance : IDisposable
                 logger.LogError("Failed to resolve engines {engines}", engines);
                 throw new ArgumentException("Failed to resolve engines", nameof(engines), e);
             }
-            process.Attach2(resolvedEngines);
+            if (resolvedEngines.Length == 0)
+            {
+                process.Attach();
+            }
+            else
+            {
+                process.Attach2(resolvedEngines);
+            }
         }
         else
         {

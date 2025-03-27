@@ -31,6 +31,15 @@ internal static class DTEExtensions
         else
         {
             port = debugger.Transports.Item(transport);
+            if (port.Name!= transport)
+            {
+                Debug.WriteLine($"Transport {transport} does not match returned object {port.Name} {port.ID}");
+                port = null;
+                foreach (EnvDTE80.Transport e in debugger.Transports)
+                {
+                    Debug.WriteLine(e.Name);
+                }
+            }
         }
         if (port is null) throw new ArgumentOutOfRangeException(nameof(transport));
         return (debugger, port);
@@ -38,6 +47,13 @@ internal static class DTEExtensions
 
     internal static IEnumerable<Engine> ResolveDebugEngines(this Transport transport, string[] engines)
     {
+        if (engines.Length == 0)
+        {
+            foreach (Engine e in transport.Engines)
+            {
+                Debug.WriteLine($"Available Engine: {e.Name} {e.ID}");
+            }
+        }
         foreach (var engine in engines)
         {
             Engine resolvedEngine=null!;
