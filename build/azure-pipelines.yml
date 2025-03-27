@@ -24,12 +24,10 @@ parameters:
     type: string
     displayName: Build Commit IDs
     default: ' '
-  - name: project_to_build
-    type: string
-    displayName: Project To Build
-    default: ' '
+  - name: projects_to_build
+    type: stringList
+    displayName: Projects To Build
     values:
-      - ' '
       - 'C3D.Extensions.Aspire.IISExpress'
       - 'C3D.Extensions.Aspire.VisualStudioDebug'
       - 'C3D.Extensions.Aspire.OutputWatcher'
@@ -70,7 +68,7 @@ variables:
 - name: 'git_commit_ids'
   value: ${{ parameters.git_commit_ids }}
 - name: 'project_to_build'
-  value: ${{ parameters.project_to_build }}
+  value: ${{ join(';',parameters.projects_to_build) }}
 - name: 'target'
   value: 'PackIfChanged'
 - name: 'nuget_version'
