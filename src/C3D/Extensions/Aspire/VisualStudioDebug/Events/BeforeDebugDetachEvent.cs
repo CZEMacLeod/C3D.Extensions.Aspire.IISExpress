@@ -3,12 +3,12 @@ using C3D.Extensions.Aspire.VisualStudioDebug.Annotations;
 
 namespace C3D.Extensions.Aspire.VisualStudioDebug.Events;
 
-public class BeforeDebugEvent : IDistributedApplicationEvent
+public class BeforeDebugDetachEvent : IDistributedApplicationEvent
 {
-    public BeforeDebugEvent(DebugAttachExecutionContext context)
+    public BeforeDebugDetachEvent(DebugDetachExecutionContext context)
     {
         Context = context;
     }
 
-    public DebugAttachExecutionContext Context { get; }
+    public DebugDetachExecutionContext Context { get; }
 }

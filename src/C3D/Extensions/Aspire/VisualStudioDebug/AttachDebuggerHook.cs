@@ -3,10 +3,12 @@ using Aspire.Hosting.ApplicationModel;
 using Aspire.Hosting.Eventing;
 using C3D.Extensions.Aspire.VisualStudioDebug.Annotations;
 using C3D.Extensions.VisualStudioDebug;
+using k8s.KubeConfigModels;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Diagnostics;
+using System.Threading;
 
 namespace C3D.Extensions.Aspire.VisualStudioDebug;
 
@@ -51,7 +53,15 @@ internal class AttachDebuggerHook : BackgroundService
             {
                 try
                 {
-                    await DebugAttachAsync(notification, resource, stoppingToken);
+                    var state = notification.Snapshot.State?.Text;
+                    if (KnownResourceStates.TerminalStates.Contains(state))
+                    {
+                        await DebugDetachAsync(notification, resource, stoppingToken);
+                    }
+                    else
+                    {
+                        await DebugAttachAsync(notification, resource, stoppingToken);
+                    }
                 }
                 catch (Exception e)
                 {
@@ -61,6 +71,27 @@ internal class AttachDebuggerHook : BackgroundService
         }
     }
 
+    private async Task DebugDetachAsync(ResourceEvent notification, ExecutableResource resource, CancellationToken stoppingToken)
+    {
+        if (resource.TryGetLastAnnotation<DebugAttachAnnotation>(out var annotation) && annotation.DebuggerProcessId.HasValue)
+        {
+            var context = new DebugDetachExecutionContext()
+            {
+                Resource = resource,
+                Annotation = annotation,
+                ServiceProvider = serviceProvider,
+                State = notification.Snapshot.State
+            };
+
+            await distributedApplicationEventing.PublishAsync(new Events.BeforeDebugDetachEvent(context), stoppingToken);
+
+            logger.LogDebug("Resetting debug state for {name} as state is {state}", resource.Name, context.State?.Text);
+            // reset the debugger process id when the process exits so we re-attach on next start
+            annotation.DebuggerProcessId = null;
+
+            await distributedApplicationEventing.PublishAsync(new Events.AfterDebugDetachEvent(context), stoppingToken);
+        }
+    }
 
     private async Task DebugAttachAsync(ResourceEvent notification, ExecutableResource resource, CancellationToken cancellationToken)
     {
@@ -167,7 +198,7 @@ internal class AttachDebuggerHook : BackgroundService
         logger.LogInformation("Debugger {vs}:{vsId} attached to target", vs.ProcessName, vs.Id);
         context.Annotation.DebuggerProcessId = vs.Id;
 
-        await distributedApplicationEventing.PublishAsync(new Events.AfterDebugEvent(context), cancellationToken);
+        await distributedApplicationEventing.PublishAsync(new Events.AfterDebugAttachEvent(context), cancellationToken);
     }
 
     private void ShowProcesses(VisualStudioInstance vs, string transport, string? qualifier)

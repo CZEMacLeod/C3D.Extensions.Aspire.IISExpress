@@ -3,9 +3,9 @@ using C3D.Extensions.Aspire.VisualStudioDebug.Annotations;
 
 namespace C3D.Extensions.Aspire.VisualStudioDebug.Events;
 
-public class AfterDebugEvent : IDistributedApplicationEvent
+public class BeforeDebugAttachEvent : IDistributedApplicationEvent
 {
-    public AfterDebugEvent(DebugAttachExecutionContext context)
+    public BeforeDebugAttachEvent(DebugAttachExecutionContext context)
     {
         Context = context;
     }
