@@ -176,7 +176,7 @@ internal class AttachDebuggerHook : BackgroundService
             engines = [];
         }
 
-        await distributedApplicationEventing.PublishAsync(new Events.BeforeDebugEvent(context), cancellationToken);
+        await distributedApplicationEventing.PublishAsync(new Events.BeforeDebugAttachEvent(context), cancellationToken);
 
         if (context.Resource.TryGetLastAnnotation<DebugAttachTransportAnnotation>(out var ta))
         {
